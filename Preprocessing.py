@@ -16,9 +16,20 @@ for line in lines:
     inputsArray.append(inputs)
     outputsArray.append(outputs)
 
-
+# Put all of the inputs and outputs into a matrix
 inputsMatrix = np.array(inputsArray)
 outputsMatrix = np.array(outputsArray)
-print(len(inputsArray))
-print(len(outputsArray))
 
+TrainingData = []
+ValidationData = []
+TestData = []
+
+#  Divide the data to Training data \ Validation data \ Test data.
+TrainingData.append(inputsMatrix[:9000])
+TrainingData.append(outputsMatrix[:9000])
+
+ValidationData.append(inputsMatrix[9000:10000])
+ValidationData.append(outputsMatrix[9000:10000])
+
+TestData.append(inputsMatrix[10000:])
+TestData.append(outputsMatrix[10000:])
