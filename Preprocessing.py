@@ -1,6 +1,4 @@
 import numpy as np
-import arff
-import tensorflow as tf
 import pandas as pd
 
 file = (open('TrainingDataset.arff'))
