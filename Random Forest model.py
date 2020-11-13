@@ -1,6 +1,6 @@
 import numpy as np
 import tensorflow as tf
-
+from tensorflow.contrib.tensor_forest.python import tensor_forest
 
 # #### Processing the data #### #
 
@@ -38,26 +38,5 @@ ValidationData.append(outputsMatrix[9000:10000])
 TestData.append(inputsMatrix[10000:])
 TestData.append(outputsMatrix[10000:])
 
-# #### Create the ANN model #### #
-INPUTS = 0
-OUTPUTS = 1
-input_size = 30
-output_size = 1
+# Create the Random forest model
 
-hidden_layer_size = 10
-
-model = tf.keras.Sequential([
-
-    tf.keras.layers.Dense(input_size),  # input layer
-    tf.keras.layers.Dense(hidden_layer_size, activation='relu'),  # 1st hidden layer
-    tf.keras.layers.Dense(hidden_layer_size, activation='relu'),  # 2nd hidden layer
-    tf.keras.layers.Dense(output_size, activation='softmax')  # output layer
-])
-
-# choosing optimizer and loss function
-model.compile(optimizer='adam', loss='sparse_categorical_crossentropy', metrics=['accurasy'])
-
-
-# #### Training the model (unfinished) #### #
-NUM_EPOCHS = 6
-model.fit(TrainingData, epochs=NUM_EPOCHS, validation_data=(ValidationData[INPUTS],ValidationData[OUTPUTS]), verbose=2)
