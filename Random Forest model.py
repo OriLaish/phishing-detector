@@ -1,6 +1,5 @@
 import numpy as np
 import tensorflow as tf
-from tensorflow.contrib.tensor_forest.python import tensor_forest
 
 # #### Processing the data #### #
 
@@ -39,4 +38,7 @@ TestData.append(inputsMatrix[10000:])
 TestData.append(outputsMatrix[10000:])
 
 # Create the Random forest model
+
+
+
 

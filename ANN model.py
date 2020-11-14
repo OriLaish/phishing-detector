@@ -24,6 +24,11 @@ for line in lines:
 inputsMatrix = np.array(inputsArray)
 outputsMatrix = np.array(outputsArray)
 
+batchInputs = tf.data.Dataset.from_tensor_slices(inputsMatrix).batch(100)
+batchOutputs = tf.data.Dataset.from_tensor_slices(outputsMatrix).batch(100)
+
+
+
 TrainingData = []
 ValidationData = []
 TestData = []
