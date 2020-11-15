@@ -32,8 +32,8 @@ ValidationData = { "inputs": inputsMatrix[9000:10000], "outputs": outputsMatrix[
 TestData = { "inputs": inputsMatrix[10000:], "outputs": outputsMatrix[10000:] }
 
 #  Divide the data to Training data \ Validation data \ Test data.
-TrainingData["inputs"] = tf.data.Dataset.from_tensor_slices(TrainingData["inputs"]).batch(100)
-TrainingData["outputs"] = tf.data.Dataset.from_tensor_slices(TrainingData["outputs"]).batch(100)
+TrainingData["inputs"] = tf.data.Dataset.from_tensor_slices(TrainingData["inputs"]).shuffle(1000).batch(100)
+TrainingData["outputs"] = tf.data.Dataset.from_tensor_slices(TrainingData["outputs"]).shuffle(1000).batch(100)
 TrainingData["data"] = tf.data.Dataset.zip((TrainingData["inputs"], TrainingData["outputs"]))
 
 
@@ -63,10 +63,10 @@ model = tf.keras.Sequential([
 ])
 
 # choosing optimizer and loss function
-model.compile(optimizer='adam', loss='binary_crossentropy', metrics=['accuracy'])
+model.compile(optimizer='adam', loss='mean_squared_error', metrics=['accuracy'])
 
 
 # #### Training the model (unfinished) #### #
 NUM_EPOCHS = 10
-model.fit(TrainingData["data"], epochs=NUM_EPOCHS, validation_data=ValidationData["data"], verbose=2)
+model.fit(TrainingData["data"], epochs=NUM_EPOCHS, validation_data=ValidationData["data"], verbose=1)
 
