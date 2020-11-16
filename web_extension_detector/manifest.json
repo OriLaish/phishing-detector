@@ -1,5 +1,13 @@
 {
-    "manifes_version": 2,
+    "manifest_version": 2,
     "name": "Phishing Detector",
-    "versio": 1.0
+    "version": "1.0",
+    "background": 
+    {
+        "persistent": true,
+        "scripts": ["background.js"]
+    },
+    "permissions" : ["contextMenus" , "webRequest", "webRequestBlocking", "*://*.youtube.com/*"]
+  
+    
 }
