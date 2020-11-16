@@ -24,9 +24,6 @@ inputsMatrix = np.array(inputsArray)
 outputsMatrix = np.array(outputsArray)
 
 
-
-
-
 TrainingData = { "inputs": inputsMatrix[:9000], "outputs": outputsMatrix[:9000] }
 ValidationData = { "inputs": inputsMatrix[9000:10000], "outputs": outputsMatrix[9000:10000] }
 TestData = { "inputs": inputsMatrix[10000:], "outputs": outputsMatrix[10000:] }
