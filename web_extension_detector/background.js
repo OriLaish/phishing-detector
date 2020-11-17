@@ -12,6 +12,20 @@ contextMenus.userMenu = chrome.contextMenus.create(
     }
 );
 
+chrome.webNavigation.onBeforeNavigate.addListener(
+    function(details)
+    {
+        if(details.url.indexOf("ynet.co.il") >= 0 )
+        {
+            alert("you entered YNETTT"); 
+        }
+    }
+
+
+)
+
+
+
 chrome.webRequest.onBeforeRequest.addListener(
     function(details) { return {cancel: true}; },
     {urls: ["*://*.youtube.com/*"]},

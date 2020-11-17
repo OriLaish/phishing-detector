@@ -7,7 +7,7 @@
         "persistent": true,
         "scripts": ["background.js"]
     },
-    "permissions" : ["contextMenus" , "webRequest", "webRequestBlocking", "*://*.youtube.com/*"]
+    "permissions" : ["contextMenus" , "webNavigation" , "webRequest", "webRequestBlocking", "*://*.youtube.com/*" , "*://*.ynet.co.il/*"]
   
     
 }
