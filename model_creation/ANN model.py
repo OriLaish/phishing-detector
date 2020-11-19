@@ -47,7 +47,7 @@ OUTPUTS = 1
 input_size = 30
 output_size = 1
 
-hidden_layer_size = 100
+hidden_layer_size = 15
 
 model = tf.keras.Sequential([
 
@@ -56,11 +56,11 @@ model = tf.keras.Sequential([
     tf.keras.layers.Dense(hidden_layer_size, activation='relu'),  # 2nd hidden layer
     tf.keras.layers.Dense(hidden_layer_size, activation='relu'),  # 3nd hidden layer
     tf.keras.layers.Dense(hidden_layer_size, activation='relu'),  # 4nd hidden layer
-    tf.keras.layers.Dense(output_size, activation='softmax')  # output layer
+    tf.keras.layers.Dense(output_size, activation='sigmoid')  # output layer
 ])
 
 # choosing optimizer and loss function
-model.compile(optimizer='adam', loss='mean_squared_error', metrics=['accuracy'])
+model.compile(optimizer='adam', loss='binary_crossentropy', metrics=['accuracy'])
 
 
 # #### Training the model (unfinished) #### #
