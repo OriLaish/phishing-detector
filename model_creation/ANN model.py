@@ -5,12 +5,10 @@ import tensorflow as tf
 
 NUM_OF_FEATURES = 30
 
-
 # ###### Data Processing ###### #
 
 # extracting data from file
 data = pd.read_csv("CSVDataSet.csv")
-print(data.shape)
 
 # updating the Result column for training
 data.rename(columns={'Result': 'Class'}, inplace=True)
