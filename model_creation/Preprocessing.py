@@ -1,35 +1,26 @@
 import numpy as np
+import pandas as pd
+import sklearn.model_selection as skms
+
+NUM_OF_FEATURES = 30
 
 
-file = (open('TrainingDataset.arff'))
-lines = file.read().split('\n')
-inputs = []
-outputs = []
-inputsArray = []
-outputsArray = []
-for line in lines:
-    dataByLines = lines[0]
-    line = np.array(dataByLines.split(','))
-    line = list(map(int, line))
-    inputs = np.array(line[:-1])
-    outputs = np.array(line[len(line)-1])
-    inputsArray.append(inputs)
-    outputsArray.append(outputs)
+# ###### Data Processing ###### #
 
-# Put all of the inputs and outputs into a matrix
-inputsMatrix = np.array(inputsArray)
-outputsMatrix = np.array(outputsArray)
+# extracting data from file
+data = pd.read_csv("CSVDataSet.csv")
+print(data.shape)
 
-TrainingData = []
-ValidationData = []
-TestData = []
+# updating the Result column for training
+data.rename(columns={'Result': 'Class'}, inplace=True)
+data['Class'] = data['Class'].map({-1: 0, 1: 1})
 
-#  Divide the data to Training data \ Validation data \ Test data.
-TrainingData.append(inputsMatrix[:9000])
-TrainingData.append(outputsMatrix[:9000])
+# splitting features from classes(results)
+x_data = data.iloc[0: -1, 0: NUM_OF_FEATURES]  # feature data
+y_data = data.iloc[0: -1, NUM_OF_FEATURES]  # result data
 
-ValidationData.append(inputsMatrix[9000:10000])
-ValidationData.append(outputsMatrix[9000:10000])
+# splitting data to training, validation & testing
+x_temp, x_test, y_temp, y_test = skms.train_test_split(x_data, y_data, test_size=0.09, random_state=18)
+x_train, x_validation, y_train, y_validation = skms.train_test_split(x_temp, y_temp, test_size=0.1, random_state=27)
 
-TestData.append(inputsMatrix[10000:])
-TestData.append(outputsMatrix[10000:])
+
