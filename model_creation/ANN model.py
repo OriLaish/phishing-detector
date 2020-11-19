@@ -1,69 +1,42 @@
 import numpy as np
+import pandas as pd
+import sklearn.model_selection as skms
 import tensorflow as tf
 
-
-# #### Processing the data #### #
-
-
-file = (open('TrainingDataset.arff'))
-lines = file.read().split('\n')
-inputs = []
-outputs = []
-inputsArray = []
-outputsArray = []
-for line in lines:
-    line = np.array(line.split(','))
-    line = list(map(lambda x: (int(x) + 1) / 2, line))
-    inputs = np.array(line[:-1])
-    outputs = np.array(line[len(line) - 1])
-    inputsArray.append(inputs)
-    outputsArray.append(outputs)
-
-# Put all of the inputs and outputs into a matrix
-inputsMatrix = np.array(inputsArray)
-outputsMatrix = np.array(outputsArray)
+NUM_OF_FEATURES = 30
 
 
-TrainingData = { "inputs": inputsMatrix[:9000], "outputs": outputsMatrix[:9000] }
-ValidationData = { "inputs": inputsMatrix[9000:10000], "outputs": outputsMatrix[9000:10000] }
-TestData = { "inputs": inputsMatrix[10000:], "outputs": outputsMatrix[10000:] }
+# ###### Data Processing ###### #
 
-#  Divide the data to Training data \ Validation data \ Test data.
-TrainingData["inputs"] = tf.data.Dataset.from_tensor_slices(TrainingData["inputs"]).shuffle(1000).batch(100)
-TrainingData["outputs"] = tf.data.Dataset.from_tensor_slices(TrainingData["outputs"]).shuffle(1000).batch(100)
-TrainingData["data"] = tf.data.Dataset.zip((TrainingData["inputs"], TrainingData["outputs"]))
+# extracting data from file
+data = pd.read_csv("CSVDataSet.csv")
+print(data.shape)
+
+# updating the Result column for training
+data.rename(columns={'Result': 'Class'}, inplace=True)
+data['Class'] = data['Class'].map({-1: 0, 1: 1})
+
+# splitting features from classes(results)
+x_data = data.iloc[0: -1, 0: NUM_OF_FEATURES]  # feature data
+y_data = data.iloc[0: -1, NUM_OF_FEATURES]  # result data
+
+# splitting data to training, validation & testing
+x_temp, x_test, y_temp, y_test = skms.train_test_split(x_data, y_data, test_size=0.09, random_state=18)
+x_train, x_val, y_train, y_val = skms.train_test_split(x_temp, y_temp, test_size=0.1, random_state=27)
 
 
-ValidationData["inputs"] = tf.data.Dataset.from_tensor_slices(ValidationData["inputs"]).batch(len(ValidationData["inputs"]))
-ValidationData["outputs"] = tf.data.Dataset.from_tensor_slices(ValidationData["outputs"]).batch(len(ValidationData["outputs"]))
-ValidationData["data"] = tf.data.Dataset.zip((ValidationData["inputs"], ValidationData["outputs"]))
-
-TestData["inputs"] = tf.data.Dataset.from_tensor_slices(TestData["inputs"]).batch(len(TestData["inputs"]))
-TestData["outputs"] = tf.data.Dataset.from_tensor_slices(TestData["outputs"]).batch(len(TestData["outputs"]))
-
-# #### Create the ANN model #### #
-INPUTS = 0
-OUTPUTS = 1
-input_size = 30
-output_size = 1
-
-hidden_layer_size = 15
+# ###### Creating ANN model ###### #
+HIDDEN_LAYER_SIZE = 100
 
 model = tf.keras.Sequential([
-
-    tf.keras.layers.Input(shape=(0, input_size)),  # input layer
-    tf.keras.layers.Dense(hidden_layer_size, activation='relu', kernel_initializer='uniform'),  # 1st hidden layer
-    tf.keras.layers.Dense(hidden_layer_size, activation='relu'),  # 2nd hidden layer
-    tf.keras.layers.Dense(hidden_layer_size, activation='relu'),  # 3nd hidden layer
-    tf.keras.layers.Dense(hidden_layer_size, activation='relu'),  # 4nd hidden layer
-    tf.keras.layers.Dense(output_size, activation='sigmoid')  # output layer
+    tf.keras.layers.Input(NUM_OF_FEATURES),  # inputs layer
+    tf.keras.layers.Dense(HIDDEN_LAYER_SIZE, activation='relu'),  # 1st hidden layer
+    tf.keras.layers.Dense(HIDDEN_LAYER_SIZE, activation='relu'),  # 2st hidden layer
+    tf.keras.layers.Dense(HIDDEN_LAYER_SIZE, activation='relu'),  # 3st hidden layer
+    tf.keras.layers.Dense(1, activation='sigmoid')  # output layer
 ])
 
-# choosing optimizer and loss function
-model.compile(optimizer='adam', loss='binary_crossentropy', metrics=['accuracy'])
+model.compile(loss='binary_crossentropy', optimizer='adam', metrics=['accuracy'])
 
-
-# #### Training the model (unfinished) #### #
-NUM_EPOCHS = 10
-model.fit(TrainingData["data"], epochs=NUM_EPOCHS, validation_data=ValidationData["data"], verbose=1)
+model.fit(x_train, y_train, epochs=20, batch_size=80, validation_data=(x_val, y_val), verbose=1)
 
