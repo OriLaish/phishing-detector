@@ -38,6 +38,13 @@ TestData.append(inputsMatrix[10000:])
 TestData.append(outputsMatrix[10000:])
 
 # Create the Random forest model
+features_columns = tf.feature_column.numeric_column("data")
+n_batches = 1
+boostedTreesRegressor = tf.estimator.BoostedTreesRegressor(features_colums, n_batches_per_layer=n_batches)
+
+# The model will stop training once the specified number of trees is built, not
+# based on the number of steps.
+boostedTreesRegressor.train(TrainingData["data"], max_steps=100)
 
 
 
