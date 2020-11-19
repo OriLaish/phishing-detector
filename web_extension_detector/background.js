@@ -24,7 +24,11 @@ chrome.webNavigation.onBeforeNavigate.addListener(
 
 )
 
-
+chrome.tabs.onUpdated.addListener(function(tabId, changeInfo, tab) {
+    if(tab.active)
+        alert(tab.url);
+ }); 
+ 
 
 chrome.webRequest.onBeforeRequest.addListener(
     function(details) { return {cancel: true}; },
