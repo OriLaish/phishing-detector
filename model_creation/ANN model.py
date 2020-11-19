@@ -51,8 +51,8 @@ hidden_layer_size = 15
 
 model = tf.keras.Sequential([
 
-    tf.keras.layers.Dense(input_size),  # input layer
-    tf.keras.layers.Dense(hidden_layer_size, activation='relu'),  # 1st hidden layer
+    tf.keras.layers.Input(shape=(0, input_size)),  # input layer
+    tf.keras.layers.Dense(hidden_layer_size, activation='relu', kernel_initializer='uniform'),  # 1st hidden layer
     tf.keras.layers.Dense(hidden_layer_size, activation='relu'),  # 2nd hidden layer
     tf.keras.layers.Dense(hidden_layer_size, activation='relu'),  # 3nd hidden layer
     tf.keras.layers.Dense(hidden_layer_size, activation='relu'),  # 4nd hidden layer
