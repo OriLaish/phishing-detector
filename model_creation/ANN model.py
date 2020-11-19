@@ -35,6 +35,7 @@ model = tf.keras.Sequential([
 ])
 
 model.compile(loss='binary_crossentropy', optimizer='adam', metrics=['accuracy'])
+early_stopping = tf.keras.callbacks.EarlyStopping(monitor='loss', min_delta=0.005, patience=5)  # to prevent over fit
 
-model.fit(x_train, y_train, epochs=20, batch_size=80, validation_data=(x_val, y_val), verbose=1)
+model.fit(x_train, y_train, epochs=20, batch_size=80, validation_data=(x_val, y_val), verbose=1, callbacks=[early_stopping])
 

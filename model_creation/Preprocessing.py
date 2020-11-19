@@ -1,7 +1,6 @@
 import numpy as np
 import pandas as pd
 import sklearn.model_selection as skms
-import tensorflow as tf
 
 NUM_OF_FEATURES = 30
 
