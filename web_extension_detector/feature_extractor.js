@@ -25,7 +25,8 @@ function URLlength(url){
 }
 
 //1.1.3
-function TinyURL(url){
+function TinyURL(url)
+{
 
 }
 
@@ -62,7 +63,7 @@ function minusInURL(url){
 //1.1.7
 function subDomainInUrl(url){
     let count = url.split('.').length - 2
-    if (count == 0)
+    if (count <= 0)
         return Legitimate
     else if (count == 1) 
         return Suspicious
@@ -71,3 +72,26 @@ function subDomainInUrl(url){
 
 
 
+//1.1.11 check for non standard port
+function nonStandardPort(url){
+    const getPort = document.createElement('a');
+    getPort.setAttribute('href', url);
+    if(getPort.port == 80 || getPort.port == 443)
+        return Legitimate
+    
+    else
+        return Phishing
+   
+
+
+}
+
+//1.1.12 - check if there is a https in the domain that is part of the name of the domain
+function httpsInURL(url){
+
+    if(url.indexOf("://") < url.indexOf("https") )
+        return Phishing
+
+    else
+        return Legitimate
+}
