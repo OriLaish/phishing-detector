@@ -26,7 +26,7 @@ x_train, x_val, y_train, y_val = skms.train_test_split(x_temp, y_temp, test_size
 
 
 # ###### Creating ANN model ###### #
-HIDDEN_LAYER_SIZE = 50
+HIDDEN_LAYER_SIZE = 100
 
 model = tf.keras.Sequential([
     tf.keras.layers.Input(NUM_OF_FEATURES),  # inputs layer
@@ -38,5 +38,5 @@ model = tf.keras.Sequential([
 
 model.compile(loss='binary_crossentropy', optimizer='adam', metrics=['accuracy'])
 
-model.fit(x_train, y_train, epochs=5, batch_size=80, validation_data=(x_val, y_val), verbose=1)
+model.fit(x_train, y_train, epochs=20, batch_size=80, validation_data=(x_val, y_val), verbose=1)
 
