@@ -107,3 +107,12 @@ function httpsInURL(url){
     else
         return Legitimate
 }
+
+
+
+//try to get html file
+let htmlcontent = document.getElementsByTagName("*"); //get all elemnts .
+for(i=0; i<htmlcontent.length; i++){
+    console.log(htmlcontent[i])
+
+}
