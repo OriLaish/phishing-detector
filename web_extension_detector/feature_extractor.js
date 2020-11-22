@@ -71,16 +71,28 @@ function subDomainInUrl(url){
 }
 
 
-
-//1.1.11 check for non standard port
-function nonStandardPort(url){
-    const getPort = document.createElement('a');
-    getPort.setAttribute('href', url);
-    if(getPort.port == 80 || getPort.port == 443)
+//1.1.10
+function favicon(url , tab){
+    const urlObj = new URL(url)
+    const faviconurl = new URL(tab.favIconUrl)
+    if(urlObj.hostname == faviconurl.hostname)
         return Legitimate
     
     else
         return Phishing
+
+}
+
+
+
+//1.1.11 check for non standard port
+function nonStandardPort(url){
+    const getPort = new URL(url)
+    if( getPort.port == 21 || getPort.port == 22 || getPort.port == 23 || getPort.port == 445 || getPort.port == 1433 || getPort.port == 1521 || getPort.port == 3306 || getPort.port == 3389 )
+        return Phishing
+    
+    else
+        return Legitimate
    
 
 
