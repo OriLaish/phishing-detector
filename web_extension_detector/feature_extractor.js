@@ -24,11 +24,6 @@ function URLlength(url){
         return Phishing
 }
 
-//1.1.3
-function TinyURL(url)
-{
-
-}
 
 //symbol = "@" 1.1.4 
 function symbolInURL(url) {
@@ -103,16 +98,62 @@ function httpsInURL(url){
 
     if(url.indexOf("://") < url.indexOf("https") )
         return Phishing
-
     else
         return Legitimate
 }
 
 
+//1.2.1
+function internalUrlRequests(){
+    var internalCounter = 0, externalCounter = 0;
+    var homeHost = (new URL(location.href)).hostname;
+    var aElements = document.getElementsByTagName("img"); //get all elemnts in specific tag .
+    for (element in aElements){
+        if(element.href.hostname == homeHost) //if same host name of tab and element
+            internalCounter += 1;
+        else
+            externalCounter += 1;
+    }
+    if(externalCounter / (externalCounter + internalCounter) > 0.61) //pracentage specified in feature docs
+        return Phishing;
+    else if(externalCounter / (externalCounter + internalCounter) < 0.22)
+        return Legitimate;
+    return Suspicious;
+}
+
+//1.2.2
+function internalUrlRequestsinA(){
+    var internalCounter = 0, externalCounter = 0;
+    var homeHost = (new URL(location.href)).hostname;
+    var aElements = document.getElementsByTagName("a"); //get all elemnts .
+    for (element in aElements){
+        if(element.href.hostname == homeHost) //if same host name of tab and element
+            internalCounter += 1;
+        else
+            externalCounter += 1;
+    }
+    if(externalCounter / (externalCounter + internalCounter) > 0.67) //pracentage specified in feature docs
+        return Phishing;
+    else if(externalCounter / (externalCounter + internalCounter) < 0.31)
+        return Legitimate;
+    return Suspicious;
+}
+//1.2.3
+
+//1.2.4
+
+//1.3.1
+
+//1.3.3
+
+//1.3.5
+
+console.log((new URL(location.href)).hostname)
+
 
 //try to get html file
-let htmlcontent = document.getElementsByTagName("*"); //get all elemnts .
+/*let htmlcontent = document.getElementsByTagName("*"); //get all elemnts .
 for(i=0; i<htmlcontent.length; i++){
     console.log(htmlcontent[i])
-
-}
+    
+}*/
