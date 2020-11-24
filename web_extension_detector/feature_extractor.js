@@ -139,7 +139,7 @@ function internalUrlRequestsinA(){
     return Suspicious;
 }
 
-//1.2.3
+//1.2.3 
 function internalUrlRequestsinMetaScriptsLink(){
     const URL_REGEX = '(ftp:\/\/|www\.|https?:\/\/){1}[a-zA-Z0-9u00a1-\uffff0-]{2,}\.[a-zA-Z0-9u00a1-\uffff0-]{2,}(\S*)';
     var internalCounter = 0, externalCounter = 0;
@@ -182,7 +182,17 @@ function internalUrlRequestsinMetaScriptsLink(){
     return Suspicious;
 
 }
+
 //1.2.4
+function getIsSFH(){
+    var homeHost = (new URL(location.href)).hostname;
+    formElement = document.getElementsByTagName("form")[0]; //get all elemnts of meta.
+    if(new URL (formElement.action).hostname == homeHost)
+        return Legitimate
+    else if(new URL (formElement.action).hostname != homeHost)
+        return Suspicious
+    return Phishing
+}
 
 //1.3.1
 
