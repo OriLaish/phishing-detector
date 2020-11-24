@@ -187,11 +187,12 @@ function internalUrlRequestsinMetaScriptsLink(){
 function getIsSFH(){
     var homeHost = (new URL(location.href)).hostname;
     formElement = document.getElementsByTagName("form")[0]; //get all elemnts of meta.
+    if(formElement.action == 'about:blank')
+        return Phishing;
     if(new URL (formElement.action).hostname == homeHost)
-        return Legitimate
-    else if(new URL (formElement.action).hostname != homeHost)
-        return Suspicious
-    return Phishing
+        return Legitimate;
+    return Suspicious;
+    
 }
 
 //1.3.1
