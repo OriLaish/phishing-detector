@@ -138,8 +138,50 @@ function internalUrlRequestsinA(){
         return Legitimate;
     return Suspicious;
 }
-//1.2.3
 
+//1.2.3
+function internalUrlRequestsinMetaScriptsLink(){
+    const URL_REGEX = '(ftp:\/\/|www\.|https?:\/\/){1}[a-zA-Z0-9u00a1-\uffff0-]{2,}\.[a-zA-Z0-9u00a1-\uffff0-]{2,}(\S*)';
+    var internalCounter = 0, externalCounter = 0;
+    var homeHost = (new URL(location.href)).hostname;
+
+    var elements = document.getElementsByTagName("link"); //get all elemnts of link.
+    for (element in elements){
+        if(element.href.hostname == homeHost) //if same host name of tab and element
+            internalCounter += 1;
+        else
+            externalCounter += 1;
+    }
+
+    elements = document.getElementsByTagName("script"); //get all elemnts of script.
+    for (element in elements){
+        if(new URL (element.src).hostname == homeHost) //if same host name of tab and element
+            internalCounter += 1;
+        else
+            externalCounter += 1;
+    }
+
+    elements = document.getElementsByTagName("meta"); //get all elemnts of meta.
+    for (element in elements){
+        if(element.hasOwnProperty('content')){ //checks if the element has the propertyt to check
+            urls = element.content.matchAll(URL_REGEX) //gets all urls in content
+            for (url in urls){
+                if(new URL (url).hostname == homeHost) //if same host name of tab and  url in element
+                    internalCounter += 1;
+                else
+                    externalCounter += 1;
+            }
+        }
+        
+    }
+
+    if(externalCounter / (externalCounter + internalCounter) > 0.81) //pracentage specified in feature docs
+        return Phishing;
+    else if(externalCounter / (externalCounter + internalCounter) < 0.17)
+        return Legitimate;
+    return Suspicious;
+
+}
 //1.2.4
 
 //1.3.1
@@ -148,7 +190,6 @@ function internalUrlRequestsinA(){
 
 //1.3.5
 
-console.log((new URL(location.href)).hostname)
 
 
 //try to get html file

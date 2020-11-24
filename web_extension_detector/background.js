@@ -12,7 +12,7 @@ contextMenus.userMenu = chrome.contextMenus.create(
     }
 );
 
-chrome.webNavigation.onBeforeNavigate.addListener(
+/*chrome.webNavigation.onBeforeNavigate.addListener(
     function(details)
     {
         if(details.url.indexOf("ynet.co.il") >= 0 )
@@ -22,7 +22,7 @@ chrome.webNavigation.onBeforeNavigate.addListener(
     }
 
 
-)
+)*/
 
 /*chrome.tabs.onUpdated.addListener(function(tabId, changeInfo, tab) {
     if(tab.active)
