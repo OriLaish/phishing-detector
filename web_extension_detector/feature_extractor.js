@@ -24,6 +24,18 @@ function URLlength(url){
         return Phishing
 }
 
+//1.1.3 
+function tinyURL(){
+    tinyurl = [ "bitly.com" , "rebrandly.com" , "short.io" , "linklyhq.com" , "clickmeter.com" , "bl.ink" , "cutt.ly" , "manage.smarturl.it" , "soo.gd" , "tinycc.com" , "clkim.com" , "tinyurl.com" , "pixelme.me" , "t2mio.com" , "tiny.ie" , "shorturl.at" , "bit.do" , "yourls.org" , "musicjet.com" , "adf.ly" , "is.gd" ]
+    let refferer = new URL(document.referrer);
+    if(tinyURL.includes(referrer.hostname) ) //check if the hostname is in the tinyurl list
+        return Phishing
+    
+    else
+        return Legitimate
+}
+
+
 
 //symbol = "@" 1.1.4 
 function symbolInURL(url) {
