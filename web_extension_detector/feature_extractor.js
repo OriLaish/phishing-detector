@@ -5,7 +5,8 @@ const Suspicious = 0
 //1.1.1
 function IPInAdress(url){
     checkForIP = RegExp('^http[s]?:\/\/((25[0-5]|2[0-4][0-9]|1[0-9][0-9]|[1-9][0-9]|[0-9])\\.){3}(25[0-5]|2[0-4][0-9]|1[0-9][0-9]|[1-9][0-9]|[0-9])');
-    if(checkForIP.test(url))
+    let count = (url.match(/0x/g)).length;
+    if(checkForIP.test(url) || count == 4) // if count == 4 then its a hexa ip in the url . 
         return Phishing
     
     else
