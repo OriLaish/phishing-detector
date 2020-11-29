@@ -5,9 +5,12 @@ const Suspicious = 0
 //1.1.1
 function IPInAdress(url){
     checkForIP = RegExp('^http[s]?:\/\/((25[0-5]|2[0-4][0-9]|1[0-9][0-9]|[1-9][0-9]|[0-9])\\.){3}(25[0-5]|2[0-4][0-9]|1[0-9][0-9]|[1-9][0-9]|[0-9])');
-    let count = (url.match(/0x/g)).length;
-    if(checkForIP.test(url) || count == 4) // if count == 4 then its a hexa ip in the url . 
+    let count = (url.match(/0x/g));
+    if(count != undefined){
+        if(checkForIP.test(url) || count.length == 4) // if count == 4 then its a hexa ip in the url . 
         return Phishing
+    
+    }
     
     else
         return Legitimate
@@ -80,9 +83,18 @@ function subDomainInUrl(url){
 
 
 //1.1.10
-function favicon(url , tab){
+function favicon(url){
     const urlObj = new URL(url)
-    const faviconurl = new URL(tab.favIconUrl)
+    let favicon = undefined;
+    let nodeList = document.getElementsByTagName("link");
+    for (let i = 0; i < nodeList.length; i++)
+    {
+        if((nodeList[i].getAttribute("rel") == "icon")||(nodeList[i].getAttribute("rel") == "shortcut icon"))
+        {
+            favicon = nodeList[i].getAttribute("href");
+        }
+    }
+    const faviconurl = new URL(favicon)
     if(urlObj.hostname == faviconurl.hostname)
         return Legitimate
     
@@ -236,3 +248,18 @@ for(i=0; i<htmlcontent.length; i++){
     console.log(htmlcontent[i])
     
 }*/
+console.log(IPInAdress(window.location.href))
+console.log(URLlength(window.location.href))
+console.log(tinyURL())
+console.log(symbolInURL(window.location.href))
+console.log(redirectingURL(window.location.href))
+console.log(minusInURL(window.location.href))
+console.log(subDomainInUrl(window.location.href))
+console.log(favicon(window.location.href))
+console.log(symbolInURL(window.location.href))
+console.log(nonStandardPort(window.location.href))
+console.log(httpsInURL(window.location.href))
+console.log(internalUrlRequests())
+console.log(internalUrlRequestsinA())
+console.log(internalUrlRequestsinMetaScriptsLink())
+console.log(getIsSFH())
