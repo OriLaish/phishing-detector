@@ -14,7 +14,19 @@ print(data.shape)
 # updating the Result column for training
 data.rename(columns={'Result': 'Class'}, inplace=True)
 data['Class'] = data['Class'].map({-1: 0, 1: 1})
+list_of_unfound_features = [ 'URL_Length', 'Shortining_Service',
+       'having_At_Symbol', 'double_slash_redirecting', 'Prefix_Suffix',
+       'having_Sub_Domain', 'SSLfinal_State', 'Domain_registeration_length',
+       'Favicon', 'port', 'HTTPS_token', 'Request_URL', 'URL_of_Anchor',
+       'Links_in_tags', 'SFH', 'Submitting_to_email', 'Abnormal_URL',
+       'Redirect', 'on_mouseover', 'RightClick', 'popUpWidnow', 'Iframe',
+       'age_of_domain', 'DNSRecord', 'web_traffic', 'Page_Rank',
+       'Google_Index', 'Links_pointing_to_page', 'Statistical_report']
 
+data = data.drop(columns=list_of_unfound_features)
+NUM_OF_FEATURES -= len(list_of_unfound_features)
+
+print(data.columns)
 # splitting features from classes(results)
 x_data = data.iloc[0: -1, 0: NUM_OF_FEATURES]  # feature data
 y_data = data.iloc[0: -1, NUM_OF_FEATURES]  # result data
