@@ -2,6 +2,7 @@ import numpy as np
 import pandas as pd
 import sklearn.model_selection as skms
 import tensorflow as tf
+import tensorflowjs as tfjs
 
 NUM_OF_FEATURES = 30
 
@@ -15,14 +16,9 @@ data.rename(columns={'Result': 'Class'}, inplace=True)
 data['Class'] = data['Class'].map({-1: 0, 1: 1})
 
 # removing data of unfounded extension data
-list_of_unfounded_features = ['having_IP_Address', 'URL_Length', 'Shortining_Service',
-       'having_At_Symbol', 'double_slash_redirecting', 'Prefix_Suffix',
-       'having_Sub_Domain', 'SSLfinal_State', 'Domain_registeration_length',
-       'Favicon', 'port', 'HTTPS_token', 'Request_URL', 'URL_of_Anchor',
-       'Links_in_tags', 'SFH', 'Submitting_to_email', 'Abnormal_URL',
-       'Redirect', 'on_mouseover', 'RightClick', 'popUpWidnow', 'Iframe',
-       'age_of_domain', 'DNSRecord', 'web_traffic', 'Page_Rank',
-       'Google_Index', 'Links_pointing_to_page', 'Statistical_report']
+list_of_unfounded_features = ['SSLfinal_State', 'Domain_registeration_length','Submitting_to_email', 'Abnormal_URL',
+       'Redirect', 'on_mouseover', 'RightClick', 'popUpWidnow', 'Iframe','age_of_domain', 'DNSRecord', 'web_traffic',
+       'Page_Rank', 'Google_Index', 'Links_pointing_to_page', 'Statistical_report']
 
 data = data = data.drop(columns=list_of_unfounded_features)  # removing data
 NUM_OF_FEATURES -= len(list_of_unfounded_features)  # updating dimension size
@@ -48,7 +44,8 @@ model = tf.keras.Sequential([
 ])
 
 model.compile(loss='binary_crossentropy', optimizer='adam', metrics=['accuracy'])
-early_stopping = tf.keras.callbacks.EarlyStopping(monitor='loss', min_delta=0.005, patience=5)  # to prevent over fit
+early_stopping = tf.keras.callbacks.EarlyStopping(monitor='loss', min_delta=0.05, patience=5)  # to prevent over fit
 
-model.fit(x_train, y_train, epochs=20, batch_size=80, validation_data=(x_val, y_val), verbose=1, callbacks=[early_stopping])
+model.fit(x_train, y_train, epochs=10, batch_size=100, validation_data=(x_val, y_val), verbose=1, callbacks=[early_stopping])
 
+tfjs.converters.save_keras_model(model, "savedModel")
