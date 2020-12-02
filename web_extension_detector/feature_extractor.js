@@ -31,6 +31,8 @@ function URLlength(url){
 //1.1.3 
 function tinyURL(){
     let tinyurl = [ "bitly.com" , "rebrandly.com" , "short.io" , "linklyhq.com" , "clickmeter.com" , "bl.ink" , "cutt.ly" , "manage.smarturl.it" , "soo.gd" , "tinycc.com" , "clkim.com" , "tinyurl.com" , "pixelme.me" , "t2mio.com" , "tiny.ie" , "shorturl.at" , "bit.do" , "yourls.org" , "musicjet.com" , "adf.ly" , "is.gd" ]
+    if(document.referrer == "")
+        return Legitimate
     let reffererToCheck = new URL(document.referrer);
     if(tinyurl.indexOf(reffererToCheck.hostname) > -1 ) //check if the hostname is in the tinyurl list
         return Legitimate
@@ -86,7 +88,7 @@ function subDomainInUrl(url){
 function favicon(url){
     const urlObj = new URL(url)
     let favicon = undefined;
-    let nodeList = document.getElementsByTagName("link");
+    let nodeList = document.getElementsByTagName("link"); //get the favicon
     for (let i = 0; i < nodeList.length; i++)
     {
         if((nodeList[i].getAttribute("rel") == "icon")||(nodeList[i].getAttribute("rel") == "shortcut icon"))
@@ -94,13 +96,25 @@ function favicon(url){
             favicon = nodeList[i].getAttribute("href");
         }
     }
-    const faviconurl = new URL(favicon)
-    if(urlObj.hostname == faviconurl.hostname)
-        return Legitimate
+    var pattern = new RegExp('^(https?:\\/\\/)?'+ // protocol
+    '((([a-z\\d]([a-z\\d-]*[a-z\\d])*)\\.)+[a-z]{2,}|'+ // domain name
+    '((\\d{1,3}\\.){3}\\d{1,3}))'+ // OR ip (v4) address
+    '(\\:\\d+)?(\\/[-a-z\\d%_.~+]*)*'+ // port and path
+    '(\\?[;&a-z\\d%_.~+=-]*)?'+ // query string
+    '(\\#[-a-z\\d_]*)?$','i'); // fragment locator
+
+    if(pattern.test(favicon)) //check if the favicon is a url if not its phishing
+    {
+        const faviconurl = new URL(favicon)
+        if(urlObj.hostname == faviconurl.hostname)
+            return Legitimate 
+    
+        else
+            return Phishing
+    }
     
     else
         return Phishing
-
 }
 
 
@@ -239,7 +253,14 @@ function getIsSFH(){
 //1.3.3
 
 //1.3.5
-
+function usingIFrame(){
+    var iFrameElements = document.getElementsByTagName("iframe")
+    if(iFrameElements.length > 0)
+        return Phishing
+    
+    else
+        return Legitimate
+}
 
 
 //try to get html file
@@ -263,3 +284,4 @@ console.log(internalUrlRequests())
 console.log(internalUrlRequestsinA())
 console.log(internalUrlRequestsinMetaScriptsLink())
 console.log(getIsSFH())
+console.log(usingIFrame())
