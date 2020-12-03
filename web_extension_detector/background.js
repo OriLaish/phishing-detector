@@ -1,5 +1,10 @@
-import * as tf from '@tensorflow/tfjs'; 
 
+import * as tfjs from '@tensorflow/tfjs'; 
+
+let newModel = tf.sequential();
+
+const model1 = tf.loadLayersModel('https://raw.githubusercontent.com/OriLaish/phishing-detection-ANN-model/main/model.json');
+const p = model1.predict([1, -1, -1, 1, 1, -1, 1, -1, 1, 1, 1, 0, 0, 0, 1, 1])
 let contextMenus = {};
 
 contextMenus.userMenu = chrome.contextMenus.create(
