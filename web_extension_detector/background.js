@@ -1,3 +1,5 @@
+import * as tf from '@tensorflow/tfjs'; 
+
 let contextMenus = {};
 
 contextMenus.userMenu = chrome.contextMenus.create(
@@ -11,7 +13,7 @@ contextMenus.userMenu = chrome.contextMenus.create(
         }
     }
 );
-
+console.log("in background");
 /*chrome.webNavigation.onBeforeNavigate.addListener(
     function(details)
     {

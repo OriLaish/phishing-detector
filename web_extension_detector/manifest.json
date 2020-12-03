@@ -5,7 +5,7 @@
     "background": 
     {
         "persistent": true,
-        "scripts": ["background.js"]
+        "scripts": ["background.html"]
     },
     "permissions" : ["contextMenus" , "webNavigation" , "webRequest", "tabs" ,  "webRequestBlocking", "*://*.youtube.com/*" , "*://*.ynet.co.il/*"],
     "content_scripts":[
