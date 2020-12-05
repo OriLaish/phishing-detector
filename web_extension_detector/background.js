@@ -1,5 +1,25 @@
 let contextMenus = {};
 
+(async()=>{
+    debugger  
+    const model1 = await tf.loadLayersModel('https://raw.githubusercontent.com/OriLaish/phishing-detection-ANN-model/main/model.json');
+    const p = model1.predict([1, -1, -1, 1, 1, -1, 1, -1, 1, 1, 1, 0, 0, 0, 1, 1]);
+    let contextMenus = {};
+
+    contextMenus.userMenu = chrome.contextMenus.create(
+    { "title": "userMenu" },
+    function()
+    {
+        if(chrome.runtime.lastError)
+        {
+            console.error(chrome.runtime.lastError.message)
+        }
+    }
+    )});
+
+
+
+
 contextMenus.userMenu = chrome.contextMenus.create(
 
     { "title": "userMenu" },
@@ -12,6 +32,13 @@ contextMenus.userMenu = chrome.contextMenus.create(
     }
 );
 
+
+
+chrome.runtime.onMessage.addListener(function (message, sender)  {
+    alert(model1.predict(message.msg))
+    console.log(message.msg)
+    alert(message.msg)
+});
 /*chrome.webNavigation.onBeforeNavigate.addListener(
     function(details)
     {
@@ -34,4 +61,4 @@ contextMenus.userMenu = chrome.contextMenus.create(
     function(details) { return {cancel: true}; },
     {urls: ["*://*.youtube.com/*"]},
     ["blocking"]
-    ); */
+    );*/

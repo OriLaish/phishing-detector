@@ -269,19 +269,25 @@ for(i=0; i<htmlcontent.length; i++){
     console.log(htmlcontent[i])
     
 }*/
-console.log(IPInAdress(window.location.href))
-console.log(URLlength(window.location.href))
-console.log(tinyURL())
-console.log(symbolInURL(window.location.href))
-console.log(redirectingURL(window.location.href))
-console.log(minusInURL(window.location.href))
-console.log(subDomainInUrl(window.location.href))
-console.log(favicon(window.location.href))
-console.log(symbolInURL(window.location.href))
-console.log(nonStandardPort(window.location.href))
-console.log(httpsInURL(window.location.href))
-console.log(internalUrlRequests())
-console.log(internalUrlRequestsinA())
-console.log(internalUrlRequestsinMetaScriptsLink())
-console.log(getIsSFH())
-console.log(usingIFrame())
+var listOfFeatures = [] ;
+listOfFeatures += (IPInAdress(window.location.href))
+listOfFeatures += (URLlength(window.location.href))
+listOfFeatures += (tinyURL())
+listOfFeatures += (symbolInURL(window.location.href))
+listOfFeatures += (redirectingURL(window.location.href))
+listOfFeatures += (minusInURL(window.location.href))
+listOfFeatures += (subDomainInUrl(window.location.href))
+listOfFeatures += (favicon(window.location.href))
+listOfFeatures += (symbolInURL(window.location.href))
+listOfFeatures += (nonStandardPort(window.location.href))
+listOfFeatures += (httpsInURL(window.location.href))
+listOfFeatures += (internalUrlRequests())
+listOfFeatures += (internalUrlRequestsinA())
+listOfFeatures += (internalUrlRequestsinMetaScriptsLink())
+listOfFeatures += (getIsSFH())
+listOfFeatures += (usingIFrame())
+console.log(listOfFeatures);
+
+chrome.runtime.sendMessage({msg: listOfFeatures}, function(response) {
+    console.log("message recived");
+  });
