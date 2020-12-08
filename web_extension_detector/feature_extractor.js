@@ -240,11 +240,14 @@ function internalUrlRequestsinMetaScriptsLink(){
 function getIsSFH(){
     var homeHost = (new URL(location.href)).hostname;
     formElement = document.getElementsByTagName("form")[0]; //get all elemnts of meta.
-    if(formElement.action == 'about:blank')
+    if(formElement){
+        if(formElement.action == 'about:blank')
         return Phishing;
     if(new URL (formElement.action).hostname == homeHost)
         return Legitimate;
     return Suspicious;
+    }
+    return Legitimate;
     
 }
 
@@ -269,19 +272,25 @@ for(i=0; i<htmlcontent.length; i++){
     console.log(htmlcontent[i])
     
 }*/
-console.log(IPInAdress(window.location.href))
-console.log(URLlength(window.location.href))
-console.log(tinyURL())
-console.log(symbolInURL(window.location.href))
-console.log(redirectingURL(window.location.href))
-console.log(minusInURL(window.location.href))
-console.log(subDomainInUrl(window.location.href))
-console.log(favicon(window.location.href))
-console.log(symbolInURL(window.location.href))
-console.log(nonStandardPort(window.location.href))
-console.log(httpsInURL(window.location.href))
-console.log(internalUrlRequests())
-console.log(internalUrlRequestsinA())
-console.log(internalUrlRequestsinMetaScriptsLink())
-console.log(getIsSFH())
-console.log(usingIFrame())
+var listOfFeatures = [] ;
+listOfFeatures.push(IPInAdress(window.location.href))
+listOfFeatures.push(URLlength(window.location.href))
+listOfFeatures.push(tinyURL())
+listOfFeatures.push(symbolInURL(window.location.href))
+listOfFeatures.push(redirectingURL(window.location.href))
+listOfFeatures.push(minusInURL(window.location.href))
+listOfFeatures.push(subDomainInUrl(window.location.href))
+listOfFeatures.push(favicon(window.location.href))
+listOfFeatures.push(symbolInURL(window.location.href))
+listOfFeatures.push(nonStandardPort(window.location.href))
+listOfFeatures.push(httpsInURL(window.location.href))
+listOfFeatures.push(internalUrlRequests())
+listOfFeatures.push(internalUrlRequestsinA())
+listOfFeatures.push(internalUrlRequestsinMetaScriptsLink())
+listOfFeatures.push(getIsSFH())
+//listOfFeatures.push(usingIFrame())
+
+
+chrome.runtime.sendMessage({msg: listOfFeatures}, function(response) {
+    console.log("message recived");
+  });
