@@ -286,7 +286,7 @@ listOfFeatures += (internalUrlRequestsinA())
 listOfFeatures += (internalUrlRequestsinMetaScriptsLink())
 listOfFeatures += (getIsSFH())
 listOfFeatures += (usingIFrame())
-console.log(listOfFeatures);
+
 
 chrome.runtime.sendMessage({msg: listOfFeatures}, function(response) {
     console.log("message recived");
