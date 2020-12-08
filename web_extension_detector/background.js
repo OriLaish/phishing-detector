@@ -1,13 +1,16 @@
-let contextMenus = {};
- 
+ debugger
+ console.log('1');
 (async()=>{
+    console.log('2')
     debugger  
     const model1 = await tf.loadLayersModel('https://raw.githubusercontent.com/OriLaish/phishing-detection-ANN-model/main/model.json');
+    console.log(model1)
     const p = model1.predict([1, -1, -1, 1, 1, -1, 1, -1, 1, 1, 1, 0, 0, 0, 1, 1]);
     alert(p)
-    let contextMenus = {};
+   
     this.model = model1;
 
+    let contextMenus = {};
     contextMenus.userMenu = chrome.contextMenus.create(
     { "title": "userMenu" },
     function()
@@ -17,22 +20,7 @@ let contextMenus = {};
             console.error(chrome.runtime.lastError.message)
         }
     }
-    )});
-
-
-
-
-contextMenus.userMenu = chrome.contextMenus.create(
-
-    { "title": "userMenu" },
-    function()
-    {
-        if(chrome.runtime.lastError)
-        {
-            console.error(chrome.runtime.lastError.message)
-        }
-    }
-);
+    )})();
 
 
 
