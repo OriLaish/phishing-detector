@@ -288,7 +288,7 @@ listOfFeatures.push(internalUrlRequests())
 listOfFeatures.push(internalUrlRequestsinA())
 listOfFeatures.push(internalUrlRequestsinMetaScriptsLink())
 listOfFeatures.push(getIsSFH())
-listOfFeatures.push(usingIFrame())
+//listOfFeatures.push(usingIFrame())
 
 
 chrome.runtime.sendMessage({msg: listOfFeatures}, function(response) {
