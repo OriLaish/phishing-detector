@@ -273,22 +273,21 @@ for(i=0; i<htmlcontent.length; i++){
     
 }*/
 var listOfFeatures = [] ;
-listOfFeatures.push(IPInAdress(window.location.href))
-listOfFeatures.push(URLlength(window.location.href))
-listOfFeatures.push(tinyURL())
-listOfFeatures.push(symbolInURL(window.location.href))
-listOfFeatures.push(redirectingURL(window.location.href))
-listOfFeatures.push(minusInURL(window.location.href))
-listOfFeatures.push(subDomainInUrl(window.location.href))
-listOfFeatures.push(favicon(window.location.href))
-listOfFeatures.push(symbolInURL(window.location.href))
-listOfFeatures.push(nonStandardPort(window.location.href))
-listOfFeatures.push(httpsInURL(window.location.href))
-listOfFeatures.push(internalUrlRequests())
-listOfFeatures.push(internalUrlRequestsinA())
-listOfFeatures.push(internalUrlRequestsinMetaScriptsLink())
-listOfFeatures.push(getIsSFH())
-//listOfFeatures.push(usingIFrame())
+listOfFeatures.push(IPInAdress(window.location.href)) //feature 1.1.1
+listOfFeatures.push(URLlength(window.location.href)) //1.1.2
+listOfFeatures.push(tinyURL()) //1.1.3
+listOfFeatures.push(symbolInURL(window.location.href)) //1.1.4
+listOfFeatures.push(redirectingURL(window.location.href)) //1.1.5
+listOfFeatures.push(minusInURL(window.location.href)) //1.1.6
+listOfFeatures.push(subDomainInUrl(window.location.href)) //1.1.7
+listOfFeatures.push(favicon(window.location.href)) //1.1.10
+listOfFeatures.push(nonStandardPort(window.location.href)) //1.1.11
+listOfFeatures.push(httpsInURL(window.location.href)) //1.1.12
+listOfFeatures.push(internalUrlRequests()) //1.2.1
+listOfFeatures.push(internalUrlRequestsinA()) //1.2.2
+listOfFeatures.push(internalUrlRequestsinMetaScriptsLink()) //1.2.3
+listOfFeatures.push(getIsSFH()) //1.2.4
+listOfFeatures.push(usingIFrame()) //1.3.5
 
 
 chrome.runtime.sendMessage({msg: listOfFeatures}, function(response) {
