@@ -148,13 +148,21 @@ function internalUrlRequests(){
     var homeHost = (new URL(location.href)).hostname;
     var aElements = document.getElementsByTagName("img"); //get all elemnts in specific tag .
     for (element in aElements){
-        if(element.href){ //check if the element has herf field
-            if(element.href.hostname == homeHost) //if same host name of tab and element
-            internalCounter += 1;
-        else
-            externalCounter += 1;
+        
+        if(element.currentSrc){ //check if the element has herf field
+            if(new URL(element.currentSrc).hostname == homeHost) //if same host name of tab and element
+                internalCounter += 1;
+            else
+                externalCounter += 1;
         }
+        else 
+            internalCounter += 1; // if no .herf then it is an internal element
+
     }
+    console.log(internalCounter)
+    console.log(externalCounter)
+    if(aElements.length == 0 ) //if no elements found then its legitimate 
+        return Legitimate;
     if(externalCounter / (externalCounter + internalCounter) > 0.61) //pracentage specified in feature docs
         return Phishing;
     else if(externalCounter / (externalCounter + internalCounter) < 0.22)
@@ -168,7 +176,6 @@ function internalUrlRequestsinA(){
     var homeHost = (new URL(location.href)).hostname;
     var aElements = document.getElementsByTagName("a"); //get all elemnts .
     for (element in aElements){
-
         if(element.href){ //checking if  <a> </a> herf  exist
             let herfOfElement = new URL(element.href)
             if(herfOfElement.hostname == homeHost) //if same host name of tab and element
@@ -177,7 +184,11 @@ function internalUrlRequestsinA(){
                 externalCounter += 1;
 
         }
+        else
+            internalCounter += 1; // if no .herf then it is an internal element
     }
+    if(aElements.length == 0 ) //if no elements found then its legitimate 
+        return Legitimate;
     if(externalCounter / (externalCounter + internalCounter) > 0.67) //pracentage specified in feature docs
         return Phishing;
     else if(externalCounter / (externalCounter + internalCounter) < 0.31)
@@ -193,6 +204,7 @@ function internalUrlRequestsinMetaScriptsLink(){
 
     var elements = document.getElementsByTagName("link"); //get all elemnts of link.
     for (element in elements){
+        
         if(element.href){ //check if herf exist on the elemnt
             
             if(element.href.hostname == homeHost) //if same host name of tab and element
@@ -201,6 +213,8 @@ function internalUrlRequestsinMetaScriptsLink(){
             else
                 externalCounter += 1;
         }
+        else
+            internalCounter += 1; // if no .herf then it is an internal element
 
     }
 
@@ -212,6 +226,8 @@ function internalUrlRequestsinMetaScriptsLink(){
             else
                 externalCounter += 1;
         }
+        else
+            internalCounter += 1; // if no .src then it is an internal element
     }
 
     elements = document.getElementsByTagName("meta"); //get all elemnts of meta.
@@ -219,15 +235,18 @@ function internalUrlRequestsinMetaScriptsLink(){
         if(element.hasOwnProperty('content')){ //checks if the element has the propertyt to check
             urls = element.content.matchAll(URL_REGEX) //gets all urls in content
             for (url in urls){
+                console.log("meta")
                 if(new URL (url).hostname == homeHost) //if same host name of tab and  url in element
                     internalCounter += 1;
                 else
                     externalCounter += 1;
             }
         }
-        
+        else
+            internalCounter += 1; // if no .hasOwnProperty then it is an internal element
     }
-
+    if( externalCounter == 0  && internalCounter == 0) //if no elements found then its legitimate 
+        return Legitimate;
     if(externalCounter / (externalCounter + internalCounter) > 0.81) //pracentage specified in feature docs
         return Phishing;
     else if(externalCounter / (externalCounter + internalCounter) < 0.17)
@@ -257,12 +276,73 @@ function getIsSFH(){
 
 //1.3.5
 function usingIFrame(){
-    var iFrameElements = document.getElementsByTagName("iframe")
+    var iFrameElements = document.getElementsByTagName("iframe") //check if there is iframe elements
     if(iFrameElements.length > 0)
         return Phishing
     
     else
         return Legitimate
+}
+
+//this is a variable  for sending a http get request 
+var HttpClient = function() {
+    this.get = function(aUrl, aCallback) {
+        var returnedvalue = 0;
+        var anHttpRequest = new XMLHttpRequest();
+        anHttpRequest.onreadystatechange = function() { 
+            if (anHttpRequest.readyState == 4 && anHttpRequest.status == 200){
+                aCallback(anHttpRequest.responseText);
+            }
+                
+        }
+
+        anHttpRequest.open( "GET", aUrl, true );            
+        anHttpRequest.send( null );
+    }
+}
+
+function ageOfDomain(url) {
+    var client = new HttpClient();
+    var returnedvalue = 5;
+    var gethostnameTosend = new URL(url)  // get the hostname to check on whois site
+    var whoisurl = "https://www.whoisxmlapi.com/whoisserver/WhoisService?apiKey=at_2LPkahzFigAlPGmhZ5r3ERIJyYR2A&ip=1&ipWhois=1&outputFormat=JSON" // whois site url
+    var urltosend = whoisurl.concat("&domainName=" , gethostnameTosend.hostname) //add the strings together 
+    client.get(urltosend //make a get request
+        , function(response){
+            var jsonObject = JSON.parse(response)
+            var createdDate = jsonObject.WhoisRecord.createdDate.split("-")
+            var updatedDate = jsonObject.WhoisRecord.updatedDate.split("-")
+
+            if(updatedDate[0] - createdDate[0] > 1) //checking the year first if its more than 1 then its ok
+                return Legitimate;
+
+            else if(updatedDate[1] - createdDate[1] >= 6) // then we check if its more than 6 months
+                return Legitimate;
+
+            else
+                return Legitimate;
+        });
+
+}
+
+
+function DNSRecord(url) {
+    var client = new HttpClient();
+    var returnedvalue = 5;
+    var gethostnameTosend = new URL(url)  // get the hostname to check on whois site
+    var whoisurl = "https://www.whoisxmlapi.com/whoisserver/WhoisService?apiKey=at_2LPkahzFigAlPGmhZ5r3ERIJyYR2A&ip=1&ipWhois=1&outputFormat=JSON" // whois site url
+    var urltosend = whoisurl.concat("&domainName=" , gethostnameTosend.hostname) //add the strings together 
+    client.get(urltosend //make a get request
+        , function(response){
+            var jsonObject = JSON.parse(response)
+            var ipsarray = jsonObject.WhoisRecord.ips
+            if(ipsarray.length > 0) //check if there is ip record
+                return Legitimate;
+    
+            else
+                return Phishing;
+        });
+
 }
 
 
@@ -288,6 +368,10 @@ listOfFeatures.push(internalUrlRequestsinA()) //1.2.2
 listOfFeatures.push(internalUrlRequestsinMetaScriptsLink()) //1.2.3
 listOfFeatures.push(getIsSFH()) //1.2.4
 listOfFeatures.push(usingIFrame()) //1.3.5
+ageOfDomain(window.location.href)
+DNSRecord(window.location.href)
+console.log(listOfFeatures)
+
 
 
 chrome.runtime.sendMessage({msg: listOfFeatures}, function(response) {
