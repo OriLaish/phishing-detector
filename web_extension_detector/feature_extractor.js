@@ -284,74 +284,6 @@ function usingIFrame(){
         return Legitimate
 }
 
-//this is a variable  for sending a http get request 
-var HttpClient = function() {
-    this.get = function(aUrl, aCallback) {
-        var returnedvalue = 0;
-        var anHttpRequest = new XMLHttpRequest();
-        anHttpRequest.onreadystatechange = function() { 
-            if (anHttpRequest.readyState == 4 && anHttpRequest.status == 200){
-                aCallback(anHttpRequest.responseText);
-            }
-                
-        }
-
-        anHttpRequest.open( "GET", aUrl, true );            
-        anHttpRequest.send( null );
-    }
-}
-
-function ageOfDomain(url) {
-    var client = new HttpClient();
-    var returnedvalue = 5;
-    var gethostnameTosend = new URL(url)  // get the hostname to check on whois site
-    var whoisurl = "https://www.whoisxmlapi.com/whoisserver/WhoisService?apiKey=at_2LPkahzFigAlPGmhZ5r3ERIJyYR2A&ip=1&ipWhois=1&outputFormat=JSON" // whois site url
-    var urltosend = whoisurl.concat("&domainName=" , gethostnameTosend.hostname) //add the strings together 
-    client.get(urltosend //make a get request
-        , function(response){
-            var jsonObject = JSON.parse(response)
-            var createdDate = jsonObject.WhoisRecord.createdDate.split("-")
-            var updatedDate = jsonObject.WhoisRecord.updatedDate.split("-")
-
-            if(updatedDate[0] - createdDate[0] > 1) //checking the year first if its more than 1 then its ok
-                return Legitimate;
-
-            else if(updatedDate[1] - createdDate[1] >= 6) // then we check if its more than 6 months
-                return Legitimate;
-
-            else
-                return Legitimate;
-        });
-
-}
-
-
-function DNSRecord(url) {
-    var client = new HttpClient();
-    var returnedvalue = 5;
-    var gethostnameTosend = new URL(url)  // get the hostname to check on whois site
-    var whoisurl = "https://www.whoisxmlapi.com/whoisserver/WhoisService?apiKey=at_2LPkahzFigAlPGmhZ5r3ERIJyYR2A&ip=1&ipWhois=1&outputFormat=JSON" // whois site url
-    var urltosend = whoisurl.concat("&domainName=" , gethostnameTosend.hostname) //add the strings together 
-    client.get(urltosend //make a get request
-        , function(response){
-            var jsonObject = JSON.parse(response)
-            var ipsarray = jsonObject.WhoisRecord.ips
-            if(ipsarray.length > 0) //check if there is ip record
-                return Legitimate;
-    
-            else
-                return Phishing;
-        });
-
-}
-
-
-//try to get html file
-/*let htmlcontent = document.getElementsByTagName("*"); //get all elemnts .
-for(i=0; i<htmlcontent.length; i++){
-    console.log(htmlcontent[i])
-    
-}*/
 var listOfFeatures = [] ;
 listOfFeatures.push(IPInAdress(window.location.href)) //feature 1.1.1
 listOfFeatures.push(URLlength(window.location.href)) //1.1.2
@@ -368,8 +300,6 @@ listOfFeatures.push(internalUrlRequestsinA()) //1.2.2
 listOfFeatures.push(internalUrlRequestsinMetaScriptsLink()) //1.2.3
 listOfFeatures.push(getIsSFH()) //1.2.4
 listOfFeatures.push(usingIFrame()) //1.3.5
-ageOfDomain(window.location.href)
-DNSRecord(window.location.href)
 console.log(listOfFeatures)
 
 
