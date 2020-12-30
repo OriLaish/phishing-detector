@@ -6,7 +6,8 @@ from datetime import datetime
 class DataBase:
 
     def __init__(self):
-        self._conn = pymysql.connect(host="localhost", user="root", passwd="root", database="test")
+
+        self._conn = pymysql.connect(host="localhost", user="root", password="root", db="test")
         self._cursor = self._conn.cursor()
 
     def reg_execute(self, query: str = "") -> bool:
@@ -49,11 +50,11 @@ class DataBase:
 
 
 def create_tables(db: DataBase):
-    db.execute("CREATE TABLE PHISHING_URLS(URL varchar(50), DATE_OF_SUB datetime, IS_SCRAPED tinyint, URL_ID int PRIMARY KEY AUTO_INCREMENT)")
-    db.execute("CREATE TABLE LEGIT_URLS(URL varchar(50), DATE_OF_SUB datetime, IS_SCRAPED tinyint, URL_ID int PRIMARY KEY AUTO_INCREMENT)")
+    db.reg_execute("DROP TABLE PHISHING_URLS")
+    db.reg_execute("DROP TABLE LEGIT_URLS")
+    db.reg_execute("CREATE TABLE PHISHING_URLS(URL varchar(500), SUBMISSION_DATE datetime, IS_SCRAPED ENUM('Y', 'N', 'F'), URL_ID int PRIMARY KEY AUTO_INCREMENT)")
+    db.reg_execute("CREATE TABLE LEGIT_URLS(URL varchar(500), SUBMISSION_DATE datetime, IS_SCRAPED ENUM('Y', 'N', 'F'), URL_ID int PRIMARY KEY AUTO_INCREMENT)")
 
 
-# db1: DataBase = DataBase()
-# ans = db1.data_extraction_execute("DESCRIBE PHISHING_URLS")
-# for x in ans[1]:
-#    print(x)
+db1 = DataBase()
+create_tables(db1)
