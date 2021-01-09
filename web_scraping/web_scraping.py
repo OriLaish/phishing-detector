@@ -1,11 +1,90 @@
 from bs4 import BeautifulSoup
 import requests
 from urllib.parse import urlparse
+import favicon
+import re
+from flask import request, g
 
 #global vars:
 Phishing = -1
 Legitimate = 1
 Suspicious = 0
+
+#1.1.1
+def is_ip(url):
+    if url.replace('.', '').isnumeric() or not url.split('.')[-1].isalpha():
+        return Phishing
+    
+    return Legitimate
+
+#1.1.2
+def longUrl(url):
+    if len(url) < 54:
+        return Legitimate
+    elif len(url) >= 54 and len(url) <= 75:
+        return Suspicious
+
+    return Phishing
+
+
+#1.1.3
+def tinyUrl(refferer):
+    tinyurlArray = [ "bitly.com" , "rebrandly.com" , "short.io" , "linklyhq.com" , "clickmeter.com" , "bl.ink" , "cutt.ly" , "manage.smarturl.it" , "soo.gd" , "tinycc.com" , "clkim.com" , "tinyurl.com" , "pixelme.me" , "t2mio.com" , "tiny.ie" , "shorturl.at" , "bit.do" , "yourls.org" , "musicjet.com" , "adf.ly" , "is.gd" ]
+    if refferer in tinyurlArray:
+        return Phishing
+    return Legitimate
+
+#1.1.4
+def hasSymbolInUrl(url): 
+    if "@" in url:
+        return Phishing
+    return Legitimate
+
+#1.1.5
+def rederectingUrl(url): 
+    if url.index("//") > 7:
+        return Phishing
+    return Legitimate
+
+#1.1.6
+def minusInUrl(url):
+    if "-" in url:
+        return Phishing
+    return Legitimate
+
+#1.1.7
+def subDomainsInUrl(url):
+    if url.count(".")  == 1:
+        return Legitimate
+    elif url.count(".") == 2:
+        return Suspicious
+
+    return Phishing
+
+
+#1.1.10
+def faviconUrl(url):
+    icons = favicon.get(url)
+    favicon1 = icons[0] #get the favicon
+    parsedfavicon = urlparse(favicon1.url)
+    parsedUrl = urlparse(url)
+    if parsedfavicon.netloc == parsedUrl.netloc:#check if they have the same hostname\netloc
+        return Legitimate
+    return Phishing #if not return Phishing
+
+#1.1.11
+def nonstandardPort(url):
+    parsedUrl = urlparse(url)
+    if (parsedUrl.port == 21 or parsedUrl.port == 22 or parsedUrl.port == 23 or parsedUrl.port == 445 or parsedUrl.port == 1433 or parsedUrl.port == 1521 or parsedUrl.port == 3306 or parsedUrl.port == 3389 ):
+        return Phishing
+    
+    return Legitimate 
+
+#1.1.12
+def httpsInUrl(url):
+    if url.count("https") == 2 or url.index("https") > 7:
+        return Phishing
+    return Legitimate
 
 
 #1.2.1
@@ -103,7 +182,8 @@ def internalUrlRequestsinMetaScriptsLink(soup , url):
         elementHasOwnProperty = element.get("hasOwnProperty")
         if elementHasOwnProperty:
             if elementHasOwnProperty("content"): #checks if the element has the propertyt to check
-                urls = element.content.findall(URL_REGEX) #gets all urls in content
+                urls = re.findall(URL_REGEX, elementHasOwnProperty.content) #gets all urls in 
+                print(urls)
                 for url1 in urls:
                     if urlparse(url1).netloc == parsedUrl.netloc: #if same host name of tab and  url in element
                         internalCounter += 1
@@ -168,10 +248,23 @@ soup = BeautifulSoup(response.content, "html.parser")
 #print(type(soup)) #check if the soup type is beautifulsoup
 #print(soup.prettify()) #print the html file ,  with all tags.
 
-print(internalUrlRequests(soup, urlToSend))    #1.2.1
-print(internalUrlRequestsinA(soup, urlToSend)) #1.2.2
-print(internalUrlRequestsinMetaScriptsLink(soup, urlToSend))  #1.2.3
-print(getIsSFH(soup,urlToSend))  #1.2.4
-print(usingIframe(soup))  #1.3.5
+ArrayOfFeatures = []
 
 
+ArrayOfFeatures.append(is_ip(urlToSend)) #1.1.1
+ArrayOfFeatures.append(longUrl(urlToSend)) #1.1.2
+ArrayOfFeatures.append(tinyUrl(response.headers.get("Referer"))) #1.1.3
+ArrayOfFeatures.append(hasSymbolInUrl(urlToSend)) #1.1.4
+ArrayOfFeatures.append(rederectingUrl(urlToSend)) #1.1.5
+ArrayOfFeatures.append(minusInUrl(urlToSend)) #1.1.6
+ArrayOfFeatures.append(subDomainsInUrl(urlToSend)) #1.1.7
+ArrayOfFeatures.append(faviconUrl(urlToSend)) #1.1.10 
+ArrayOfFeatures.append(nonstandardPort(urlToSend))#1.1.11
+ArrayOfFeatures.append(httpsInUrl(urlToSend)) #1.1.12
+ArrayOfFeatures.append(internalUrlRequests(soup, urlToSend))    #1.2.1
+ArrayOfFeatures.append(internalUrlRequestsinA(soup, urlToSend)) #1.2.2
+ArrayOfFeatures.append(internalUrlRequestsinMetaScriptsLink(soup, urlToSend))  #1.2.3
+ArrayOfFeatures.append(getIsSFH(soup,urlToSend))  #1.2.4
+ArrayOfFeatures.append(usingIframe(soup))  #1.3.5
+
+print(ArrayOfFeatures)
