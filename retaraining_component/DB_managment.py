@@ -1,4 +1,3 @@
-import asyncio
 import pymysql
 from datetime import datetime
 
@@ -6,7 +5,6 @@ from datetime import datetime
 class DataBase:
 
     def __init__(self):
-
         self._conn = pymysql.connect(host="localhost", user="root", password="root", db="test")
         self._cursor = self._conn.cursor()
 
@@ -56,5 +54,5 @@ def create_tables(db: DataBase):
     db.reg_execute("CREATE TABLE LEGIT_URLS(URL varchar(500), SUBMISSION_DATE datetime, IS_SCRAPED ENUM('Y', 'N', 'F'), URL_ID int PRIMARY KEY AUTO_INCREMENT)")
 
 
-db1 = DataBase()
-create_tables(db1)
+# db1 = DataBase()
+# create_tables(db1)
