@@ -17,7 +17,7 @@ class URLInfo:
         """
         :return: submission date column if it is d datetime and None otherwise
         """
-        if self._submission_date is datetime:
+        if type(self._submission_date) is datetime:
             return self._submission_date
         return None
 
@@ -36,16 +36,30 @@ class URLsDataBase(DB_managment.DataBase):
         :return: None
         """
         self.commit_execute(
-            query=f"INSERT INTO {self._table_name}(URL, SUBMISSION_DATE, IS_SCRAPED) VALUES('{url_name}', '{submission_date}', 'N')")
+            query=f"INSERT INTO {self._table_name}(URL, SUBMISSION_DATE, IS_SCRAPED) "
+                  f"VALUES('{url_name}', '{submission_date}', 'N')")
 
     def last_scraped_date(self) -> (bool, datetime):
         """
         :return: returns the datetime of the last item in the DB that haven't been scraped
         """
         ans = self.data_extraction_execute(
-            f"SELECT SUBMISSION_DATE FROM {self._table_name} WHERE IS_SCRAPED = 'Y' OR IS_SCRAPED = 'F'")
+            f"SELECT * FROM {self._table_name} WHERE IS_SCRAPED = 'Y' OR IS_SCRAPED = 'F'"
+            f" ORDER BY SUBMISSION_DATE DESC LIMIT 1")
         if ans[0] and len(ans[1]) > 0:
             last_line = URLInfo(ans[1][-1])  # gets last inserted & scraped line
+            if last_line.get_submission_date() is not None:
+                return True, last_line.get_submission_date()
+        return False, None
+
+    def last_entered_date(self) -> (bool, datetime):
+        """
+        :return: returns the date of the last entered url to the DB as datetime
+        """
+        ans = self.data_extraction_execute(
+            f"SELECT * FROM {self._table_name} ORDER BY SUBMISSION_DATE DESC LIMIT 1")
+        if ans[0] and len(ans[1]) > 0:
+            last_line = URLInfo(ans[1][0])  # gets last inserted & scraped line
             if last_line.get_submission_date() is not None:
                 return True, last_line.get_submission_date()
         return False, None
@@ -61,7 +75,6 @@ class URLsDataBase(DB_managment.DataBase):
         return -1
 
 
-#  db_conn = URLsDataBase("PHISHING_URLS")
-#  db_conn.enter_row(url_name="test1", submission_date=datetime.now())
-#  lines = db_conn.data_extraction_execute("SELECT * FROM PHISHING_URLS")[1]
-# print(lines[-1])
+# db_conn = URLsDataBase("PHISHING_URLS")
+# db_conn.enter_row("test_3", datetime.now())
+# print(db_conn.last_scraped_date()[1])
