@@ -275,6 +275,7 @@ async def main():
     ArrayOfFeatures.append(usingIframe(soup))  #1.3.5
 
     print(ArrayOfFeatures)
+    browser.close()
     return ArrayOfFeatures
 
 
