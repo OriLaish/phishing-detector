@@ -4,6 +4,8 @@ from urllib.parse import urlparse
 import favicon
 import re
 from flask import request, g
+import pyppeteer
+import asyncio
 
 #global vars:
 Phishing = -1
@@ -237,34 +239,47 @@ def usingIframe(soup):
 
 
 
+async def main():
+    #just testing with random url
+    urlToSend = "https://www.w3schools.com/python/python_for_loops.asp"    
+    # launches a chromium browser, can use chrome instead of chromium as well.
+    browser = await pyppeteer.launch()
+    # creates a blank page
+    page = await browser.newPage()
+    # follows to the requested page and runs the dynamic code on the site.
+    await page.goto(urlToSend)
+    # provides the html content of the page
+    cont = await page.content()
+
+    soup = BeautifulSoup(cont, "html.parser")
+    #print(type(soup)) #check if the soup type is beautifulsoup
+    #print(soup.prettify()) #print the html file ,  with all tags.
+    
+    ArrayOfFeatures = []
+    ReffererOfPage = await page.goBack() #get the reffer of the page
+
+    ArrayOfFeatures.append(is_ip(urlToSend)) #1.1.1
+    ArrayOfFeatures.append(longUrl(urlToSend)) #1.1.2
+    ArrayOfFeatures.append(tinyUrl(ReffererOfPage)) #1.1.3
+    ArrayOfFeatures.append(hasSymbolInUrl(urlToSend)) #1.1.4
+    ArrayOfFeatures.append(rederectingUrl(urlToSend)) #1.1.5
+    ArrayOfFeatures.append(minusInUrl(urlToSend)) #1.1.6
+    ArrayOfFeatures.append(subDomainsInUrl(urlToSend)) #1.1.7
+    ArrayOfFeatures.append(faviconUrl(urlToSend)) #1.1.10 
+    ArrayOfFeatures.append(nonstandardPort(urlToSend))#1.1.11
+    ArrayOfFeatures.append(httpsInUrl(urlToSend)) #1.1.12
+    ArrayOfFeatures.append(internalUrlRequests(soup, urlToSend))    #1.2.1
+    ArrayOfFeatures.append(internalUrlRequestsinA(soup, urlToSend)) #1.2.2
+    ArrayOfFeatures.append(internalUrlRequestsinMetaScriptsLink(soup, urlToSend))  #1.2.3
+    ArrayOfFeatures.append(getIsSFH(soup,urlToSend))  #1.2.4
+    ArrayOfFeatures.append(usingIframe(soup))  #1.3.5
+
+    print(ArrayOfFeatures)
+    return ArrayOfFeatures
 
 
-#just testing with random url
-urlToSend = "https://www.w3schools.com/python/python_for_loops.asp"
-response = requests.get(urlToSend)
 
-soup = BeautifulSoup(response.content, "html.parser")
+if __name__ == "__main__":
+    loop = asyncio.get_event_loop()
+    loop.run_until_complete(main())
 
-#print(type(soup)) #check if the soup type is beautifulsoup
-#print(soup.prettify()) #print the html file ,  with all tags.
-
-ArrayOfFeatures = []
-
-
-ArrayOfFeatures.append(is_ip(urlToSend)) #1.1.1
-ArrayOfFeatures.append(longUrl(urlToSend)) #1.1.2
-ArrayOfFeatures.append(tinyUrl(response.headers.get("Referer"))) #1.1.3
-ArrayOfFeatures.append(hasSymbolInUrl(urlToSend)) #1.1.4
-ArrayOfFeatures.append(rederectingUrl(urlToSend)) #1.1.5
-ArrayOfFeatures.append(minusInUrl(urlToSend)) #1.1.6
-ArrayOfFeatures.append(subDomainsInUrl(urlToSend)) #1.1.7
-ArrayOfFeatures.append(faviconUrl(urlToSend)) #1.1.10 
-ArrayOfFeatures.append(nonstandardPort(urlToSend))#1.1.11
-ArrayOfFeatures.append(httpsInUrl(urlToSend)) #1.1.12
-ArrayOfFeatures.append(internalUrlRequests(soup, urlToSend))    #1.2.1
-ArrayOfFeatures.append(internalUrlRequestsinA(soup, urlToSend)) #1.2.2
-ArrayOfFeatures.append(internalUrlRequestsinMetaScriptsLink(soup, urlToSend))  #1.2.3
-ArrayOfFeatures.append(getIsSFH(soup,urlToSend))  #1.2.4
-ArrayOfFeatures.append(usingIframe(soup))  #1.3.5
-
-print(ArrayOfFeatures)
