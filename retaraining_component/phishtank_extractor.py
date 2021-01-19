@@ -1,16 +1,14 @@
 import pandas as pd
 import csv
 import datetime
-import retaraining_component.URLS_DB
+import retaraining_component.DB_managment as DB_managment
 
-PHISHTANK_URL= "http://data.phishtank.com/data/online-valid.csv"
+PHISHTANK_URL = "http://data.phishtank.com/data/online-valid.csv"
 TEMP_LOC = "tempTank.csv"
 
 
-
-
 def main():
-    db_conn = retaraining_component.URLS_DB.URLsDataBase("PHISHING_URLS")
+    db_conn = DB_managment.URLsDataBase("PHISHING_URLS")
     last_entered_date = db_conn.last_entered_date(PHISHTANK_URL)
     phishtank_df = pd.read_csv()
     for line in phishtank_df.values:
@@ -22,7 +20,7 @@ def main():
             break
 
 
-if  __name__ == '__main__':
+if __name__ == '__main__':
     main()
 
 
