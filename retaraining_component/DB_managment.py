@@ -171,7 +171,7 @@ class ScrapedDataDataBase:
         :param features: the scraped features
         :return: bool of whether the insertion was successful
         """
-        if url_type not in ['P', 'L'] or len(features) != 15:  # checks if data to enter is ok
+        if url_type not in ['P', 'L'] or len(features) != 15 or type(url_id) == int:  # checks if data to enter is ok
             return False
         print(f"INSERT INTO SCRAPED_DATA (URL_ID, TYPE , FEATURES, IS_TRAINED) VALUES ("
               f"{url_id}, '{url_type}', '{'#'.join([str(x) for x in features])}', 'N')")
@@ -184,6 +184,8 @@ class ScrapedDataDataBase:
         :param primary_id: the id
         :return: whether the change was successful
         """
+        if type(id) != int:
+            return False
         return self._db.commit_execute(
             f"UPDATE SCRAPED_DATA SET IS_TRAINED = 'Y' WHERE ID = {primary_id};")
 
@@ -209,10 +211,3 @@ def create_tables(db: DataBase):
     db.reg_execute("CREATE TABLE SCRAPED_DATA(URL_ID int, TYPE ENUM('P', 'L'), FEATURES VARCHAR(46), IS_TRAINED ENUM"
                    "('Y', 'N'), ID int PRIMARY KEY AUTO_INCREMENT)")
 
-
-# db = DataBase()
-# print(db.data_extraction_execute("SELECT * FROM SCRAPED_DATA"))
-sdb = ScrapedDataDataBase()
-# sdb.enter_row(url_id=3, url_type='P', features=[1 for i in range(1, 16)])
-sdb.update_training_status(5)
-print(sdb.get_traineble_data())
