@@ -16,17 +16,22 @@ def main(requset):
     
 
     phishtank_df = pd.read_csv(PHISHTANK_URL)
-    last_entered_date = urlDB.objects.latest('Submission_Date')
+    try:
+        last_entered_date = urlDB.objects.latest('Submission_Date')
+
+    except:
+        last_entered_date = False
+
     for line in phishtank_df.values:
         date = datetime.datetime.strptime(line[3].split("+")[0], '%Y-%m-%dT%H:%M:%S')
-        print(last_entered_date.Submission_Date)
-        if date > last_entered_date.Submission_Date:
-            print("1")
-            url = line[2]
+        if ( not last_entered_date or date > last_entered_date.Submission_Date )  and ( urlDB.objects.filter(URL = line[1]).count() == 0 ) :
+            url = line[1]
             added_line = urlDB(URL=url, Submission_Date=date ,Is_scraped = 'N', Is_Phishing=True )
             added_line.save()
         else:
            break
+    
+    print(last_entered_date)
     return HttpResponse("Hello")
 
 
