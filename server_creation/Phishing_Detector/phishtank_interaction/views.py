@@ -19,12 +19,14 @@ def main(requset):
     last_entered_date = urlDB.objects.latest('Submission_Date')
     for line in phishtank_df.values:
         date = datetime.datetime.strptime(line[3].split("+")[0], '%Y-%m-%dT%H:%M:%S')
+        print(last_entered_date.Submission_Date)
         if date > last_entered_date.Submission_Date:
+            print("1")
             url = line[2]
             added_line = urlDB(URL=url, Submission_Date=date ,Is_scraped = 'N', Is_Phishing=True )
             added_line.save()
         else:
-            break
+           break
     return HttpResponse("Hello")
 
 
