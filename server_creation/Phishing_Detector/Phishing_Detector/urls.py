@@ -18,5 +18,5 @@ from django.urls import path, include
 
 urlpatterns = [
     path('admin/', admin.site.urls),
-    path('', include('phishtank_interaction.urls'))
+    path('', include('Data_Acquisition.urls'))
 ]

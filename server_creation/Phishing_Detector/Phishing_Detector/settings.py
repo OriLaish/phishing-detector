@@ -39,6 +39,7 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'temp.apps.TempConfig',
     'phishtank_interaction.apps.PhishtankInteractionConfig',
+    'Data_Acquisition.apps.DataAcquisitionConfig',
     'rest_framework'
 ]
 
