@@ -239,7 +239,7 @@ def usingIframe(soup):
 
 
 
-async def wep_scraping(url , browser = False):  
+async def web_scraping(url , browser = False):  
     # launches a chromium browser, can use chrome instead of chromium as well.
     if not browser:
         browser = await pyppeteer.launch()
