@@ -12,36 +12,34 @@ class If_Scraped_enum(Enum):
 
 
 class URLS(models.Model):
-    URL = models.CharField(null=False, max_length=500, unique=True)
+    url = models.CharField(null=False, max_length=500, unique=True)
 
     def __str__(self):
-        return f'URL: {self.URL}, id: {self.id}'
+        return f'URL: {self.url}, id: {self.id}'
     
 
-
-
 class Phishtank_urls(models.Model):
-    URL_ID = models.ForeignKey(URLS, null=False, on_delete=models.CASCADE, unique=True)
-    Submission_Date = models.DateTimeField(null=False)
-    Is_scraped = models.CharField( max_length=50 , choices=If_Scraped_enum.choices())
+    url_id = models.ForeignKey(URLS, null=False, on_delete=models.CASCADE, unique=True)
+    submission_date = models.DateTimeField(null=False)
+    is_scraped = models.CharField( max_length=50 , choices=If_Scraped_enum.choices())
 
     def __str__(self):
-        return f'URL: {self.URL_ID.URL}, submission_date: {self.Submission_Date}'
+        return f'URL: {self.url_id.url}, submission_date: {self.submission_date}'
     
 
 class Client_urls(models.Model):
-    URL_ID = models.ForeignKey(URLS, null=False, on_delete=models.CASCADE, unique=True)
-    Is_Phishing = models.BooleanField(null=False)
-    Features = models.CharField( max_length = 100 )
-    Submission_Count = models.IntegerField()
+    url_id = models.ForeignKey(URLS, null=False, on_delete=models.CASCADE, unique=True)
+    is_phishing = models.BooleanField(null=False)
+    features = models.CharField( max_length = 100 )
+    submission_count = models.IntegerField()
     
 
 class Web_scraping_data(models.Model):
-    urlId = models.ForeignKey(URLS, null=False, on_delete=models.CASCADE, unique=True)
-    Features = models.CharField( max_length= 100 )
-    Is_Phishing = models.BooleanField(null=False)
-    Is_Trained = models.BooleanField(null=False)
-    Is_From_Client = models.BooleanField(null=False)
+    url_id = models.ForeignKey(URLS, null=False, on_delete=models.CASCADE, unique=True)
+    features = models.CharField( max_length= 100 )
+    is_phishing = models.BooleanField(null=False)
+    is_trained = models.BooleanField(null=False)
+    is_from_client = models.BooleanField(null=False)
 
 
 class Models_Helper:
@@ -53,19 +51,19 @@ class Models_Helper:
         :param url: the url to find the id of (Str)
         :return: the id of the url or -1 if url not in db (int)
         """
-        if URLS.objects.filter(URL=url).count() == 0:
+        if URLS.objects.filter(url=url).count() == 0:
             return -1
-        return URLS.objects.filter(URL=url)[0].id
+        return URLS.objects.filter(url=url)[0].id
     
     @staticmethod
     def insert_url(url):
         """
         function enters the url to db and return the id of the recieved URL
         :param url: the urlto insert (Str)
-        :return: the id of the url or -1 if url not in db (int)
+        :return: the id of the url (id)
         """
         if Models_Helper.get_url_id(url) == -1:
-            URLS(URL=url).save()
+            URLS(url=url).save()
         return Models_Helper.get_url_id(url)
 
     @staticmethod
@@ -77,7 +75,7 @@ class Models_Helper:
         """
         url_id = Models_Helper.insert_url(url)
         try:
-            Phishtank_urls(URL_ID=URLS.objects.filter(id=url_id)[0], Submission_Date=submission_date, Is_scraped=False).save()
+            Phishtank_urls(url_id=URLS.objects.filter(id=url_id)[0], submission_date=submission_date, is_scraped=False).save()
             return True
         except:
             return False
@@ -91,23 +89,39 @@ class Models_Helper:
         training(Str)
         :return: if insertion secsseded
         """
-        if Phishtank_urls.objects.filter(URL_ID=Models_Helper.get_url_id(url)).count() == 1:
+        if Phishtank_urls.objects.filter(url_id=Models_Helper.get_url_id(url)).count() == 1 or type(url) != str or type(is_phishing) != bool or type(features) != str:
             return False
         try:
-            url_line = Client_urls.objects.filter(URL_ID=Models_Helper.get_url_id(url))[0]
-            if url_line.Is_Phishing == is_phishing:  # if the phishing status of the saved and submitted is the same then increase count
-                url_line.Submission_Count += 1
+            url_line = Client_urls.objects.filter(url_id=Models_Helper.get_url_id(url))[0]
+            if url_line.is_phishing == is_phishing:  # if the phishing status of the saved and submitted is the same then increase count
+                url_line.submission_count = url_line.submission_count + 1
             else:  # else decreas count 
-                url_line.Submission_Count -= 1
+                url_line.submission_count -= 1
             url_line.save()
             return True
         except:
             url_id = Models_Helper.insert_url(url)
             try:
-                Client_urls(URL_ID=URLS.objects.filter(id=url_id)[0], Features=features, Is_Phishing=is_phishing, Submission_Count=1).save()
+                Client_urls(url_id=URLS.objects.filter(id=url_id)[0], features=features, is_phishing=is_phishing, submission_count=1).save()
                 return True
-            except:
+            except Exception as e:
+                print("## Exception: ", e)
                 return False
+    
+    @staticmethod
+    def insert_web_scraping_data_line(url_id, features, is_phishing, is_from_client):
+        try:
+            Web_scraping_data(url_id=url_id, features=features, is_phishing=is_phishing, is_trained= False, is_from_client=is_from_client).save()
+            return True
+        except:
+            return False
+
+    @staticmethod
+    def is_url_in_phishtank_urls(url):
+        url_id = Models_Helper.get_url_id(url)
+        return url_id == -1 or Phishtank_urls.objects.filter(url_id=url_id).count() != 0
+
+
         
 
     
