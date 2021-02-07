@@ -46,7 +46,11 @@ def phishtank_url_db_update():
 
 def client_url_submission(request):
     request_info = client_submission_data(request)
+<<<<<<< HEAD
     if not request_info.is_secceded:
+=======
+    if not request_info._is_secceded:
+>>>>>>> 84402d6426d4023468651f1a0033843ad303ad55
         return Response({'Bad Request': 'failed to process requrst'}, status=status.HTTP_400_BAD_REQUEST)
     check = Models_Helper.insert_client_url_line(url=request_info.url, is_phishing=request_info.is_phishing, features=request_info.features)
     if check:
