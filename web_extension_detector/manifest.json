@@ -14,7 +14,13 @@
             "js": ["feature_extractor.js"]
 
         }
-    ],
+    ]
+    ,"browser_action": {
+    
+        "default_icon": "NoFishing.PNG",
+        "default_popup": "popup.html",
+        "default_title" :"Feedback on the site"
+    },
     "content_security_policy": "script-src 'self' 'unsafe-eval' https://cdn.jsdelivr.net/npm/@tensorflow/tfjs@2.0.0/dist/tf.min.js; object-src 'self'"
   
     

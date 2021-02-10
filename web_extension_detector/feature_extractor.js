@@ -304,6 +304,6 @@ console.log(listOfFeatures)
 
 
 
-chrome.runtime.sendMessage({msg: listOfFeatures}, function(response) {
+chrome.runtime.sendMessage({features: listOfFeatures, sender: "feature_extractor.js"}, function(response) {
     console.log("message recived");
   });
