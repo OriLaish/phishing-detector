@@ -17,7 +17,7 @@
     ]
     ,"browser_action": {
     
-        "default_icon": "NoFishing.PNG",
+        "default_icon": "IconLegitimateSites.png",
         "default_popup": "popup.html",
         "default_title" :"Feedback on the site"
     },

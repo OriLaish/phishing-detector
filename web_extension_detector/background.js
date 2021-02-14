@@ -12,19 +12,35 @@
             console.error(chrome.runtime.lastError.message)
         }
     });*/
-    
+
+const PhishingPradiction = 0.99
+
     chrome.runtime.onMessage.addListener(function ( message, sender , sendResponse)  {
        // alert(model1.predict(message.msg))
         if (message.sender == "feature_extractor.js"){
         console.log(message.features)
         globalThis.features = message.features //save the features
-        alert(globalThis.model.predict(tf.tensor(message.features, [1, 15])))
-        sendResponse({
-            type: "NO_DATA"
+        var pradiction = globalThis.model.predict(tf.tensor(message.features, [1, 15])).dataSync()
+
+            if(pradiction < PhishingPradiction){ //Phishing
+                chrome.browserAction.setIcon( {path : "IconPhishingSites.PNG"}
+                
+                );
+
+            }
+        
+            else{ //Legitimate
+                chrome.browserAction.setIcon( {path : "IconLegitimateSites.png"});
+
+            }
+        
+
+            sendResponse({
+                type: "NO_DATA"
                     });
 
         
-            }
+                }
         
         else if(message.sender == "popup.js")
         {
