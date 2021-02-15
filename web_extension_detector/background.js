@@ -55,11 +55,11 @@ const PhishingPradiction = 0.99
                 var url = tab.url;
                 var featuresToSend = globalThis.features
                 var Is_PhishingToSend = message.Is_Phishing
-                var ServerURL = "127.0.0.1:8000/submit_url"
+                var ServerURL = "http://127.0.0.1:8000/submit_url"
                 // send it to the server
                 var HTTPRequest = new XMLHttpRequest();
                 var params = 'Is_Phishing='+ Is_PhishingToSend + '&url=' + url  + '&features=' + featuresToSend;
-                HTTPRequest.open('POST', url, true);
+                HTTPRequest.open('POST', ServerURL, true);
 
                 //Send the proper header information along with the request
                 HTTPRequest.setRequestHeader('Content-type', 'application/x-www-form-urlencoded');
@@ -69,6 +69,7 @@ const PhishingPradiction = 0.99
                     alert(HTTPRequest.responseText);
                     }
                 }
+                alert(params);
                 HTTPRequest.send(params);
                 alert("sended")
 
