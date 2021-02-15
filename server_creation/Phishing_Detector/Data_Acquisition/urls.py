@@ -1,8 +1,8 @@
 from django.urls import path
 from .views import main
-from .views import client_submission_data
+from . import views
 
 urlpatterns = [
     path('', main),
-    path('submit_url', client_submission_data)
+    path('submit_url', views.client_url_submission_api.as_view())
 ]

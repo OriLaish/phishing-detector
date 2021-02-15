@@ -9,17 +9,22 @@ class client_submission_data:
         self.is_secceded = False
         try:
             if request.method == 'POST':
-                if not client_submission_data.certify_features(request.POST['features']):
-                     print("Error: failed to process features")
+                print("checked post")
+                if not True: # client_submission_data.certify_features(request.POST['features']):
+                    print("checked features")
+                    print("Error: failed to process features")
                 else:
+                    print('request is:' ,request.POST)
                     self.url = request.POST['url']
                     self.is_phishing = request.POST['is_phishing']
                     self.features = request.POST['features']
+                    print("gdg")
                     self.is_secceded = True
             else:
                 print("Error: wrong request method")
         except Exception as e:
-            print("## Exception:", e)
+            print("## Exception in data intiation:", e)
+            self.is_secceded = False
 
 
 
