@@ -21,11 +21,13 @@ const PhishingPradiction = 0.99
         console.log(message.features)
         globalThis.features = message.features //save the features
         var pradiction = globalThis.model.predict(tf.tensor(message.features, [1, 15])).dataSync()
-
             if(pradiction < PhishingPradiction){ //Phishing
                 chrome.browserAction.setIcon( {path : "IconPhishingSites.PNG"}
-                
                 );
+                 
+                
+                
+            
 
             }
         
@@ -40,7 +42,7 @@ const PhishingPradiction = 0.99
                     });
 
         
-                }
+            }
         
         else if(message.sender == "popup.js")
         {

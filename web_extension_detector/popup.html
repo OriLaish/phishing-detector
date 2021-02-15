@@ -1,6 +1,7 @@
 <!DOCTYPE html>
 <html>
 <head>
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-BmbxuPwQa2lc/FVzBcNJ7UAyJxM6wuqIj61tLrc4wSX0szH/Ev+nYRRuWlolflfl" crossorigin="anonymous">
         <style>
             html, body {
 
@@ -40,17 +41,31 @@
                 cursor: pointer;
             }
         </style>
-
+      <!-- Background image -->
+  <div
+    class="p-5 text-center bg-image"
+    style="
+      background-image: url('https://mdbootstrap.com/img/new/slides/041.jpg');
+      height: 440px;
+    "
+  >
+    
+  <!-- Background image -->
     </head>
 <body>
 
-<h1>Phishing Detector : Feedback on the site</h1>
-<p>Add a comment if this site is Phishing or not.</p>
-<p>if it is a phshing site a positive comment</p>
-<p>if it is'nt a phshing site a nagative comment</p>
 
- <button  class="buttonPhishing"   id="PhishingButton">Phishing site</button>
- <button  class="buttonLegitimate"  id="LegitimateButton" >Legitimate site</button>
+<figure class="text-center">
+  <blockquote class="blockquote">
+    <p>Phishing Detector : Feedback on the site</p>
+  </blockquote>
+  <figcaption class="blockquote-footer">
+    Press the button that fit <cite title="Source Title">your opinion on the site </cite>
+  </figcaption>
+</figure>
+<button type="button" class="btn btn-success" id="PhishingButton" >Legitimate site</button>
+<button type="button" class="btn btn-danger" id="LegitimateButton" >Phishing site</button>
+
 <script  src="popup.js" > </script>
 
 
