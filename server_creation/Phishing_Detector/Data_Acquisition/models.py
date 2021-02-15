@@ -12,7 +12,7 @@ class If_Scraped_enum(Enum):
 
 
 class URLS(models.Model):
-    url = models.CharField(null=False, max_length=500, unique=True)
+    url = models.URLField(null=False, max_length=500, unique=True)
 
     def __str__(self):
         return f'URL: {self.url}, id: {self.id}'
@@ -32,6 +32,7 @@ class Client_urls(models.Model):
     is_phishing = models.BooleanField(null=False)
     features = models.CharField( max_length = 100 )
     submission_count = models.IntegerField()
+    is_in_web_scraping= models.BooleanField(default=False)
     
 
 class Web_scraping_data(models.Model):
@@ -110,6 +111,9 @@ class Models_Helper:
     
     @staticmethod
     def insert_web_scraping_data_line(url_id, features, is_phishing, is_from_client):
+        """
+        inserting line to web scraping table (table of featured data for training)
+        """
         try:
             Web_scraping_data(url_id=url_id, features=features, is_phishing=is_phishing, is_trained= False, is_from_client=is_from_client).save()
             return True
@@ -118,8 +122,33 @@ class Models_Helper:
 
     @staticmethod
     def is_url_in_phishtank_urls(url):
+        """
+        returning if url is in phishtank table
+        """
         url_id = Models_Helper.get_url_id(url)
         return url_id == -1 or Phishtank_urls.objects.filter(url_id=url_id).count() != 0
+    
+    @staticmethod
+    def update_client_data_table():
+        """
+        function updates negetive submission negtive count urls to correct is_phishing type
+        """
+        for line in Client_urls.objects.filter(submission_count__lt=0):
+            line.is_phishing = not line.is_phishing
+            line.submission_count = line.submission_count * -1
+            line.save()
+
+    @staticmethod
+    def add_client_urls_to_scraping_table():
+        """
+        function adds url that has been submitted by enough users to the list of traineble urls
+        """
+        for line in Client_urls.objects.filter(submission_count__gte=SUBMISSION_COUNT_THRESHOLD).filter(is_in_web_scraping=False): # lines in correct 
+            Models_Helper.insert_web_scraping_data_line(url_id=line.url_id, features=line.features, is_phishing=line.is_phishing, is_from_client=True)
+            line.is_in_web_scraping = True
+            line.save()
+    
+    
 
 
         

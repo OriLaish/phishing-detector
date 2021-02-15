@@ -15,7 +15,7 @@ def features_validator(features):
     return True
 
 class client_submission_data_serializer(serializers.Serializer):
-    url = serializers.CharField(required=True)
+    url = serializers.URLField(required=True)
     features = serializers.CharField(required=True, validators=[features_validator])
     is_phishing = serializers.BooleanField(required=True)
 
