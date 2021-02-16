@@ -17,6 +17,7 @@ from .serializers import client_submission_data, client_submission_data_serializ
 from rest_framework.parsers import JSONParser
 from io import StringIO
 import asyncio
+from .web_scraping import web_scraping
 
 SUBMISSION_COUNT_THRESHOLD = 4
 
@@ -26,6 +27,7 @@ TEMP_LOC = "tempTank.csv"
 def main(request):
     for line in URLS.objects.filter(id__gt=4):
         print(line.id)
+    scrape_new_urls()
     return HttpResponse('hello')
 
 
@@ -51,8 +53,23 @@ def phishtank_url_db_update():
 
 def scrape_new_urls():
     unscraped_urls = Phishtank_urls.objects.filter(is_scraped=False)
-    urls = [URLS.objects.filter(id=x.url_id) for x in unscraped_urls]
-        
+    print(unscraped_urls)
+    for line in unscraped_urls: 
+        loop = asyncio.get_event_loop()
+        loop.run_until_complete(scrape_line(line,False))
+        line.is_scraped=True
+        line.save()
+
+async def scrape_line(line, browser):
+    url = URLS.objects.filter(id=line.url_id_id) # get the url of line
+    featuresOfURL = await web_scraping(url, browser)
+    is_from_client= False
+    is_Phishing=True
+    if( Models_Helper.insert_web_scraping_data_line(line.url_id_id,featuresOfURL,is_Phishing,is_from_client)):
+        print("working")
+    else:
+        print("Not working")
+
 
 class client_url_submission_api(APIView):
 
