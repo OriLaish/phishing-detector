@@ -20,18 +20,11 @@ import asyncio
 from .web_scraping import web_scraping
 import pyppeteer
 
-SUBMISSION_COUNT_THRESHOLD = 4
 
 PHISHTANK_URL = "http://data.phishtank.com/data/online-valid.csv"
 TEMP_LOC = "tempTank.csv"
 
 def main(request):
-    # Models_Helper.insert_phistank_url_line("https://www.w3schools.com/python", datetime.datetime.now())
-    line = Phishtank_urls.objects.filter(url_id=10)[0]
-    loop = asyncio.new_event_loop()
-    loop.run_until_complete(scrape_line(line))
-    line.is_scraped=True
-    line.save()
     
     return HttpResponse('hello')
 
@@ -57,21 +50,27 @@ def phishtank_url_db_update():
     return HttpResponse(Models_Helper.insert_client_url_line("test4", False, "3dd"))
 
 def scrape_new_urls():
+    """
+    scrape all unscraped urls in server
+    """
     unscraped_urls = Phishtank_urls.objects.filter(is_scraped=False)
-    print(unscraped_urls)
-    for line in unscraped_urls: 
-        loop = asyncio.new_event_loop()
-        loop.run_until_complete(scrape_line(line, False))
-        line.is_scraped=True
-        line.save()
+    browser = asyncio.new_event_loop().run_until_complete(pyppeteer.launch())
+    for line in unscraped_urls:
+        if scrape_line(line, browser=browser):
+            line.is_scraped = True
+            line.save() 
+    
 
-async def scrape_line(line, browser=False):
-    # print("url is: ", url) # get the url of line
-    featuresOfURL = await web_scraping(line.url_id.url, browser)
-    if( Models_Helper.insert_web_scraping_data_line(line.url_id.url, ",".join(featuresOfURL), True, False)):
-        print("working")
+def scrape_line(line, browser=False):
+    """
+    scrape line and adds it to web scrapind data table
+    """
+    featuresOfURL = asyncio.new_event_loop().run_until_complete(web_scraping(line.url_id.url, browser))
+    print('after features')
+    if( Models_Helper.insert_web_scraping_data_line(url_id=line.url_id, features=",".join(str(f) for f in featuresOfURL), is_phishing=True, is_from_client=False)):
+        return True
     else:
-        print("Not working")
+        return False
 
 
 class client_url_submission_api(APIView):
