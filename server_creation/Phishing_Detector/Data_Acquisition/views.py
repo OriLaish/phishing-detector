@@ -18,6 +18,7 @@ from rest_framework.parsers import JSONParser
 from io import StringIO
 import asyncio
 from .web_scraping import web_scraping
+import pyppeteer
 
 SUBMISSION_COUNT_THRESHOLD = 4
 
@@ -25,9 +26,13 @@ PHISHTANK_URL = "http://data.phishtank.com/data/online-valid.csv"
 TEMP_LOC = "tempTank.csv"
 
 def main(request):
-    for line in URLS.objects.filter(id__gt=4):
-        print(line.id)
-    scrape_new_urls()
+    # Models_Helper.insert_phistank_url_line("https://www.w3schools.com/python", datetime.datetime.now())
+    line = Phishtank_urls.objects.filter(url_id=10)[0]
+    loop = asyncio.new_event_loop()
+    loop.run_until_complete(scrape_line(line))
+    line.is_scraped=True
+    line.save()
+    
     return HttpResponse('hello')
 
 
@@ -55,17 +60,15 @@ def scrape_new_urls():
     unscraped_urls = Phishtank_urls.objects.filter(is_scraped=False)
     print(unscraped_urls)
     for line in unscraped_urls: 
-        loop = asyncio.get_event_loop()
-        loop.run_until_complete(scrape_line(line,False))
+        loop = asyncio.new_event_loop()
+        loop.run_until_complete(scrape_line(line, False))
         line.is_scraped=True
         line.save()
 
-async def scrape_line(line, browser):
-    url = URLS.objects.filter(id=line.url_id_id) # get the url of line
-    featuresOfURL = await web_scraping(url, browser)
-    is_from_client= False
-    is_Phishing=True
-    if( Models_Helper.insert_web_scraping_data_line(line.url_id_id,featuresOfURL,is_Phishing,is_from_client)):
+async def scrape_line(line, browser=False):
+    # print("url is: ", url) # get the url of line
+    featuresOfURL = await web_scraping(line.url_id.url, browser)
+    if( Models_Helper.insert_web_scraping_data_line(line.url_id.url, ",".join(featuresOfURL), True, False)):
         print("working")
     else:
         print("Not working")
