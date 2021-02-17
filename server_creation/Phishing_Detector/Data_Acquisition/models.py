@@ -1,6 +1,8 @@
 from django.db import models
 from enum import Enum
 
+SUBMISSION_COUNT_THRESHOLD = 4
+
 class If_Scraped_enum(Enum):
     Yes = "Y"
     No = "N"
@@ -114,11 +116,9 @@ class Models_Helper:
         """
         inserting line to web scraping table (table of featured data for training)
         """
-        try:
-            Web_scraping_data(url_id=url_id, features=features, is_phishing=is_phishing, is_trained= False, is_from_client=is_from_client).save()
-            return True
-        except:
-            return False
+        Web_scraping_data(url_id=url_id, features=features, is_phishing=is_phishing, is_trained= False, is_from_client=is_from_client).save()
+        return True
+        
 
     @staticmethod
     def is_url_in_phishtank_urls(url):

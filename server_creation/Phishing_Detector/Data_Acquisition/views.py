@@ -18,22 +18,20 @@ from rest_framework.parsers import JSONParser
 from io import StringIO
 import asyncio
 from .web_scraping import web_scraping
+import pyppeteer
 
-SUBMISSION_COUNT_THRESHOLD = 4
 
 PHISHTANK_URL = "http://data.phishtank.com/data/online-valid.csv"
 TEMP_LOC = "tempTank.csv"
 
 def main(request):
-    for line in URLS.objects.filter(id__gt=4):
-        print(line.id)
-    scrape_new_urls()
+    
     return HttpResponse('hello')
 
 
 # Create your views here.
 def phishtank_url_db_update():
-    
+    startTime = datetime.datetime.now()
     phishtank_df = pd.read_csv(PHISHTANK_URL)
     try:
         last_entered_date = Phishtank_urls.objects.latest('submission_date').submission_date
@@ -49,26 +47,37 @@ def phishtank_url_db_update():
         else:
            break
     #Models_Helper.insert_client_url_line("test3", True, "3dd")
-    return HttpResponse(Models_Helper.insert_client_url_line("test4", False, "3dd"))
+    #return HttpResponse(Models_Helper.insert_client_url_line("test4", False, "3dd"))
+    endTime = datetime.datetime.now()
+    TotalTime = endTime - startTime
+    return HttpResponse("It took (in seconds): ", TotalTime.seconds)
 
 def scrape_new_urls():
+    """
+    scrape all unscraped urls in server
+    """
+    startTime = datetime.datetime.now()
     unscraped_urls = Phishtank_urls.objects.filter(is_scraped=False)
-    print(unscraped_urls)
-    for line in unscraped_urls: 
-        loop = asyncio.get_event_loop()
-        loop.run_until_complete(scrape_line(line,False))
-        line.is_scraped=True
-        line.save()
+    browser = asyncio.new_event_loop().run_until_complete(pyppeteer.launch())
+    for line in unscraped_urls:
+        if scrape_line(line, browser=browser):
+            line.is_scraped = True
+            line.save()
+    endTime = datetime.datetime.now()
+    TotalTime = endTime - startTime
+    return HttpResponse("It took (in seconds): ", TotalTime.seconds)
+    
 
-async def scrape_line(line, browser):
-    url = URLS.objects.filter(id=line.url_id_id) # get the url of line
-    featuresOfURL = await web_scraping(url, browser)
-    is_from_client= False
-    is_Phishing=True
-    if( Models_Helper.insert_web_scraping_data_line(line.url_id_id,featuresOfURL,is_Phishing,is_from_client)):
-        print("working")
+def scrape_line(line, browser=False):
+    """
+    scrape line and adds it to web scrapind data table
+    """
+    featuresOfURL = asyncio.new_event_loop().run_until_complete(web_scraping(line.url_id.url, browser))
+    print('after features')
+    if( Models_Helper.insert_web_scraping_data_line(url_id=line.url_id, features=",".join(str(f) for f in featuresOfURL), is_phishing=True, is_from_client=False)):
+        return True
     else:
-        print("Not working")
+        return False
 
 
 class client_url_submission_api(APIView):
