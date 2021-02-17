@@ -56,16 +56,23 @@ def scrape_new_urls():
     """
     scrape all unscraped urls in server
     """
+<<<<<<< HEAD
     startTime = datetime.datetime.now()
+=======
+>>>>>>> 756ba60740b96c0ccd1b94993b37e874660ce254
     unscraped_urls = Phishtank_urls.objects.filter(is_scraped=False)
     browser = asyncio.new_event_loop().run_until_complete(pyppeteer.launch())
     for line in unscraped_urls:
         if scrape_line(line, browser=browser):
             line.is_scraped = True
+<<<<<<< HEAD
             line.save()
     endTime = datetime.datetime.now()
     TotalTime = endTime - startTime
     return HttpResponse("It took (in seconds): ", TotalTime.seconds)
+=======
+            line.save() 
+>>>>>>> 756ba60740b96c0ccd1b94993b37e874660ce254
     
 
 def scrape_line(line, browser=False):
