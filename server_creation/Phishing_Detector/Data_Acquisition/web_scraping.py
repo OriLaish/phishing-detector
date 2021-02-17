@@ -241,12 +241,19 @@ def usingIframe(soup):
 
 async def web_scraping(url , browser = False):  
     # launches a chromium browser, can use chrome instead of chromium as well.
+    print("in web scraping")
+    is_local_browser = True
     if not browser:
-        browser = await pyppeteer.launch()
+        print("in gi")
+        is_local_browser = False
+        browser = await pyppeteer.launch(handleSIGINT=False, handleSIGTERM=False, handleSIGHUP=False)
     # creates a blank page
+    print("opened browser")
     page = await browser.newPage()
     # follows to the requested page and runs the dynamic code on the site.
+    print("url is: ", url)
     await page.goto(url)
+    print("after goto")
     # provides the html content of the page
     cont = await page.content()
 
@@ -272,10 +279,13 @@ async def web_scraping(url , browser = False):
     ArrayOfFeatures.append(getIsSFH(soup,url))  #1.2.4
     ArrayOfFeatures.append(usingIframe(soup))  #1.3.5
 
-    browser.close()
+    if is_local_browser:
+        await browser.close()
+    print("finished web scraping")
     return ArrayOfFeatures
 
-
+# loop = asyncio.get_event_loop()
+# loop.run_until_complete(web_scraping("https://www.w3schools.com/python"))
 
 #if __name__ == "__wep_scraping__":
 #    loop = asyncio.get_event_loop()
