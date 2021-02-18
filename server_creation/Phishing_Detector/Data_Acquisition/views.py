@@ -29,8 +29,10 @@ def main(request):
     return HttpResponse('hello')
 
 
-# Create your views here.
-def phishtank_url_db_update():
+def phishtank_url_db_update(request):
+    """
+    interacts with phishtank API and inserts new phishing urls to local DB
+    """
     startTime = datetime.datetime.now()
     phishtank_df = pd.read_csv(PHISHTANK_URL)
     try:
@@ -46,38 +48,29 @@ def phishtank_url_db_update():
             Models_Helper.insert_phistank_url_line(url=url, submission_date=date)
         else:
            break
-    #Models_Helper.insert_client_url_line("test3", True, "3dd")
-    #return HttpResponse(Models_Helper.insert_client_url_line("test4", False, "3dd"))
     endTime = datetime.datetime.now()
     TotalTime = endTime - startTime
-    return HttpResponse("It took (in seconds): ", TotalTime.seconds)
+    return HttpResponse(f"It took (in seconds): {TotalTime.seconds}")
 
-def scrape_new_urls():
+
+def scrape_new_urls(request):
     """
     scrape all unscraped urls in server
     """
     startTime = datetime.datetime.now()
     unscraped_urls = Phishtank_urls.objects.filter(is_scraped=False)
-    browser = asyncio.new_event_loop().run_until_complete(pyppeteer.launch())
+    browser = asyncio.new_event_loop().run_until_complete(pyppeteer.launch(handleSIGINT=False, handleSIGTERM=False, handleSIGHUP=False))
     for line in unscraped_urls:
-        if scrape_line(line, browser=browser):
+        if Models_Helper.scrape_line(line):
             line.is_scraped = True
             line.save()
+    asyncio.new_event_loop().run_until_complete(browser.close())
     endTime = datetime.datetime.now()
     TotalTime = endTime - startTime
-    return HttpResponse("It took (in seconds): ", TotalTime.seconds)
+    return HttpResponse(f"It took (in seconds): {TotalTime.seconds}")
     
 
-def scrape_line(line, browser=False):
-    """
-    scrape line and adds it to web scrapind data table
-    """
-    featuresOfURL = asyncio.new_event_loop().run_until_complete(web_scraping(line.url_id.url, browser))
-    print('after features')
-    if( Models_Helper.insert_web_scraping_data_line(url_id=line.url_id, features=",".join(str(f) for f in featuresOfURL), is_phishing=True, is_from_client=False)):
-        return True
-    else:
-        return False
+
 
 
 class client_url_submission_api(APIView):
@@ -89,17 +82,19 @@ class client_url_submission_api(APIView):
         handeling url submission from clients
         """
         request_info_serialzer = client_submission_data_serializer(data=request.data)
+        print(request.data)
         if not request_info_serialzer.is_valid():
             print(request_info_serialzer.errors)
             return Response({'Bad Request': f'failed to process requrst - {request_info_serialzer.errors}'}, status=status.HTTP_400_BAD_REQUEST)
-        request_info_serialzer.save()  
+        request_info_serialzer.save()
+        print(f"url={request_info_serialzer.data.get('url')}, is_phishing={request_info_serialzer.data.get('is_phishing')}, features={request_info_serialzer.data.get('features')}")  
         if Models_Helper.insert_client_url_line(url=request_info_serialzer.data.get('url'), is_phishing=request_info_serialzer.data.get('is_phishing'), features=request_info_serialzer.data.get('features')):
             return Response({'message': 'url submitted sucssefully'}, status=status.HTTP_202_ACCEPTED)
         else:
             return Response({'Bad Request': 'failed to submit url'}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
     
     def get(self, request, format=None):
-      return Response({'Bad Request': 'Only available as post requests'}, status=status.HTTP_400_BAD_REQUEST)
+        return Response({'Bad Request': 'Only available as post requests'}, status=status.HTTP_400_BAD_REQUEST)
     
 
 

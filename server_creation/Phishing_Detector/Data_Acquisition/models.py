@@ -1,5 +1,7 @@
 from django.db import models
 from enum import Enum
+import asyncio
+from .web_scraping import web_scraping
 
 SUBMISSION_COUNT_THRESHOLD = 4
 
@@ -92,14 +94,16 @@ class Models_Helper:
         training(Str)
         :return: if insertion secsseded
         """
+        print("is phishing: ", is_phishing)
         if Phishtank_urls.objects.filter(url_id=Models_Helper.get_url_id(url)).count() == 1 or type(url) != str or type(is_phishing) != bool or type(features) != str:
             return False
         try:
+            print("is phishing: ", is_phishing)
             url_line = Client_urls.objects.filter(url_id=Models_Helper.get_url_id(url))[0]
             if url_line.is_phishing == is_phishing:  # if the phishing status of the saved and submitted is the same then increase count
                 url_line.submission_count = url_line.submission_count + 1
             else:  # else decreas count 
-                url_line.submission_count -= 1
+                url_line.submission_count = url_line.submission_count - 1
             url_line.save()
             return True
         except:
@@ -148,6 +152,20 @@ class Models_Helper:
             line.is_in_web_scraping = True
             line.save()
     
+
+    @staticmethod
+    def scrape_line(line, browser=False):
+        """
+        scrape line and adds it to web scrapind data table
+        """
+        try:
+            featuresOfURL = asyncio.new_event_loop().run_until_complete(web_scraping(line.url_id.url, browser))
+        except:
+            return False
+        if( Models_Helper.insert_web_scraping_data_line(url_id=line.url_id, features=",".join(str(f) for f in featuresOfURL), is_phishing=True, is_from_client=False)):
+            return True
+        else:
+            return False
     
 
 
