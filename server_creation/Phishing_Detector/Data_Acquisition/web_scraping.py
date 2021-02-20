@@ -241,10 +241,10 @@ def usingIframe(soup):
 
 async def web_scraping(url , browser=False):  
     # launches a chromium browser, can use chrome instead of chromium as well.
-    is_local_browser = True
+    is_local_browser = False
     if not browser:
         is_local_browser = False
-        browser = await pyppeteer.launch(handleSIGINT=False, handleSIGTERM=False, handleSIGHUP=False)
+        browser = await pyppeteer.launch(handleSIGINT=False, handleSIGTERM=False, handleSIGHUP=False , ignoreHTTPSErrors=True)
     # creates a blank page
     page = await browser.newPage()
     # follows to the requested page and runs the dynamic code on the site.
@@ -276,6 +276,8 @@ async def web_scraping(url , browser=False):
 
     if is_local_browser:
         await browser.close()
+        print("closing...")
+
     return ArrayOfFeatures
 
 # loop = asyncio.get_event_loop()
