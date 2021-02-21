@@ -2,13 +2,7 @@ from django.shortcuts import render
 import pandas as pd
 import csv
 import datetime
-from .models import URLS
-from .models import If_Scraped_enum
-from .models import Phishtank_urls
-from .models import Client_urls
-from .models import Web_scraping_data
-from .models import Models_Helper
-from .web_scraping import web_scraping
+from .models import URLS, If_Scraped_enum, Phishtank_urls, Client_urls, Web_scraping_data, Models_Helper
 from rest_framework import generics, status
 from rest_framework.views import APIView
 from rest_framework.response import Response
@@ -20,15 +14,16 @@ import asyncio
 from .web_scraping import web_scraping
 import pyppeteer
 from django.http import FileResponse
-
+from .model_training_managment import open_model, save_model
 
 
 PHISHTANK_URL = "http://data.phishtank.com/data/online-valid.csv"
 TEMP_LOC = "tempTank.csv"
 
 def main(request):
-    return FileResponse(open('Saved_Model/model.json', 'rb'))
-    return FileResponse(open('Data_Acquisition/aurora-borealis-beautiful-5k-t5.jpg', 'rb'))
+    model = open_model()
+    save_model(model)
+    return serve_model(request)
 
 def serve_model(request):
     return FileResponse(open('Saved_Model/model.json', 'rb'))
