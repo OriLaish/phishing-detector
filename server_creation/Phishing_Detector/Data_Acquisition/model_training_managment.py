@@ -15,6 +15,7 @@ def save_model(model):
     """
     saves the retrained model in the required place
     """
+    pass
 
 def train_model(data):
     """
