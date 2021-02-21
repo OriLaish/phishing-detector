@@ -19,14 +19,19 @@ from io import StringIO
 import asyncio
 from .web_scraping import web_scraping
 import pyppeteer
+from django.http import FileResponse
+
 
 
 PHISHTANK_URL = "http://data.phishtank.com/data/online-valid.csv"
 TEMP_LOC = "tempTank.csv"
 
 def main(request):
-    
-    return HttpResponse('hello')
+    return FileResponse(open('Saved_Model/model.json', 'rb'))
+    return FileResponse(open('Data_Acquisition/aurora-borealis-beautiful-5k-t5.jpg', 'rb'))
+
+def serve_model(request):
+    return FileResponse(open('Saved_Model/model.json', 'rb'))
 
 
 def phishtank_url_db_update(request):
@@ -61,7 +66,7 @@ def scrape_new_urls(request):
     startTime = datetime.datetime.now()
     unscraped_urls = Phishtank_urls.objects.filter(is_scraped=False)
     event_loop = asyncio.new_event_loop()
-    browser = event_loop.run_until_complete(pyppeteer.launch(handleSIGINT=False, handleSIGTERM=False, handleSIGHUP=False , ignoreHTTPSErrors=True , args= ["--ignore-certificate-errors"]))
+    browser = event_loop.run_until_complete(pyppeteer.launch(handleSIGINT=False, handleSIGTERM=False, handleSIGHUP=False , ignoreHTTPSErrors=True , args= ["--ignore-certificate-errors-spki-list=jc7r1tE54FOO="]))
     print("in scrape")
     for line in unscraped_urls:
         print("in for loop")

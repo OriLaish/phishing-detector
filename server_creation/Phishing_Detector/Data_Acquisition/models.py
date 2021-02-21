@@ -162,8 +162,9 @@ class Models_Helper:
             print(browser)
             featuresOfURL = event_loop.run_until_complete(web_scraping(line.url_id.url, browser))
             print("in scrape_line")
-        except:
-            return False
+        except Exception as e:
+            print("## Exception in web scraping:", e)
+            return True
         if( Models_Helper.insert_web_scraping_data_line(url_id=line.url_id, features=",".join(str(f) for f in featuresOfURL), is_phishing=True, is_from_client=False)):
             return True
         else:
