@@ -47,11 +47,12 @@ class Model_Training_Helper:
         """
         that function processing the traineble data available in the database and returns theb 
         """
-        untrained_urls = Web_scraping_data.objects.filter(is_trained=False)
+        #untrained_urls = Web_scraping_data.objects.filter(is_trained=False)
+        untrained_urls = Web_scraping_data.objects.filter(id=1)
         min_amount_of_trainebles = min(untrained_urls.filter(is_phishing=True).count(), untrained_urls.filter(is_phishing=False).count())
         data = traineble_data()
-        if min_amount_of_trainebles < Model_Training_Helper.MIN_TRAINEBLE_LINES :
-            return None
+        #if min_amount_of_trainebles < Model_Training_Helper.MIN_TRAINEBLE_LINES :
+        #    return None
         for line in untrained_urls.filter(is_phishing=True)[:min_amount_of_trainebles]:
             Model_Training_Helper.enter_line_to_data(line, data)
         for line in untrained_urls.filter(is_phishing=False)[:min_amount_of_trainebles]:
@@ -79,10 +80,13 @@ class Model_Training_Helper:
         model = Model_Training_Helper.open_model()
         data = Model_Training_Helper.process_training_data()
         if data == None:
+            print("not working")
             return False
-        early_stopping = tf.keras.callbacks.EarlyStopping(monitor='loss', min_delta=0.05, patience=5)  # to prevent over fit
-        model.fit(data.x_train, data.y_train, epochs=10, batch_size=100, validation_data=(data.x_val, data.y_val), verbose=1, callbacks=[early_stopping])
-        Model_Training_Helper.save_model(model)
+        #early_stopping = tf.keras.callbacks.EarlyStopping(monitor='loss', min_delta=0.05, patience=5)  # to prevent over fit
+        #model.fit(data.x_train, data.y_train, epochs=10, batch_size=100, validation_data=(data.x_val, data.y_val), verbose=1, callbacks=[early_stopping])
+        #Model_Training_Helper.save_model(model)
+        print("working")
+        print(data)
         return  True
 
 

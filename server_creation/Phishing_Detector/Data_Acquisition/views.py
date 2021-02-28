@@ -14,7 +14,7 @@ import asyncio
 from .web_scraping import web_scraping
 import pyppeteer
 from django.http import FileResponse
-from .model_training_managment import open_model, save_model
+from .model_training_managment import open_model, save_model, train_model
 
 
 PHISHTANK_URL = "http://data.phishtank.com/data/online-valid.csv"
@@ -23,6 +23,7 @@ TEMP_LOC = "tempTank.csv"
 def main(request):
     model = open_model()
     save_model(model)
+    train_model()
     return serve_model(request)
 
 def serve_model(request):
