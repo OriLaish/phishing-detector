@@ -6,18 +6,24 @@ import tensorflowjs as tfjs
 from .models import Web_scraping_data, Models_Helper
 
 class traineble_data:
-    def __init__():
-        columns = ['having_IP_Address', 'URL_Length', 'Shortining_Service',
+    
+    COLUMNS = ['having_IP_Address', 'URL_Length', 'Shortining_Service',
         'having_At_Symbol', 'double_slash_redirecting', 'Prefix_Suffix',
         'having_Sub_Domain', 'Favicon', 'port', 'HTTPS_token', 'Request_URL',
         'URL_of_Anchor', 'Links_in_tags', 'SFH', 'Iframe', 'Result']
-        self.df = pd.DataFrame()
+    NUM_OF_FEATURES = len(traineble_data.COLUMNS)  # updating dimension size
+
+    def __init__():
+        self.df = pd.DataFrame(columns=traineble_data.COLUMNS)
     
     def preprocess():
-        pass
+        # splitting features from classes(results)
+        x_data = self.df.iloc[0: -1, 0: traineble_data.NUM_OF_FEATURES]  # feature data
+        y_data = self.df.iloc[0: -1, traineble_data.NUM_OF_FEATURES]  # result data
 
-        
-
+        # splitting data to training, validation & testing
+        x_temp, self.x_test, y_temp, self.y_test = skms.train_test_split(x_data, y_data, test_size=0.09, random_state=18)
+        self.x_train, self.x_val, self.y_train, self.y_val = skms.train_test_split(x_temp, y_temp, test_size=0.1, random_state=27)
 
 class Model_Training_Helper:
     MIN_TRAINEBLE_LINES = 60  
@@ -50,6 +56,8 @@ class Model_Training_Helper:
             Model_Training_Helper.enter_line_to_data(line, data)
         for line in untrained_urls.filter(is_phishing=False)[:min_amount_of_trainebles]:
             Model_Training_Helper.enter_line_to_data(line, data)
+        data.preprocess()
+        return data
             
 
     
@@ -57,7 +65,7 @@ class Model_Training_Helper:
     def enter_line_to_data(line, data):
         features = [int(f) for f in line.features.split(",")]
         features.append(1 if line.is_phishing else -1)
-        data.df
+        data.df = data.df.append(dict(zip(df.columns, features)), ignore_index=True)
         
         
 
