@@ -5,6 +5,7 @@ import tensorflow as tf
 import tensorflowjs as tfjs
 from .models import Web_scraping_data, Models_Helper
 
+"""
 class traineble_data:
     
     COLUMNS = ['having_IP_Address', 'URL_Length', 'Shortining_Service',
@@ -24,28 +25,28 @@ class traineble_data:
         # splitting data to training, validation & testing
         x_temp, self.x_test, y_temp, self.y_test = skms.train_test_split(x_data, y_data, test_size=0.09, random_state=18)
         self.x_train, self.x_val, self.y_train, self.y_val = skms.train_test_split(x_temp, y_temp, test_size=0.1, random_state=27)
-
+"""
 class Model_Training_Helper:
     MIN_TRAINEBLE_LINES = 60  
-
+"""
     @staticmethod 
     def open_model():
         """
-        open and return model
+        #open and return model
         """
         return tfjs.converters.load_keras_model("Saved_Model\\model.json")
 
     @staticmethod
     def save_model(model):
         """
-        saves the retrained model in the required place
+        #saves the retrained model in the required place
         """
         tfjs.converters.save_keras_model(model, "Saved_Model")
 
     @staticmethod
     def process_training_data():
         """
-        that function processing the traineble data available in the database and returns theb 
+        #that function processing the traineble data available in the database and returns theb 
         """
         #untrained_urls = Web_scraping_data.objects.filter(is_trained=False)
         untrained_urls = Web_scraping_data.objects.filter(id=1)
@@ -66,7 +67,7 @@ class Model_Training_Helper:
     def enter_line_to_data(line, data):
         features = [int(f) for f in line.features.split(",")]
         features.append(1 if line.is_phishing else -1)
-        data.df = data.df.append(dict(zip(df.columns, features)), ignore_index=True)
+        data.df = data.df.append(dict(zip(data.df.columns, features)), ignore_index=True)
         
         
 
@@ -75,7 +76,7 @@ class Model_Training_Helper:
     @staticmethod
     def train_model():
         """
-        train the opened model and save it
+        #train the opened model and save it
         """
         model = Model_Training_Helper.open_model()
         data = Model_Training_Helper.process_training_data()
@@ -89,6 +90,6 @@ class Model_Training_Helper:
         print(data)
         return  True
 
-
+"""
 
 
