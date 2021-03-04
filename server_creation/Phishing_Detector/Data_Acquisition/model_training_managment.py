@@ -32,7 +32,7 @@ class Model_Training_Helper:
     @staticmethod 
     def open_model():
         """
-        #open and return model
+        ##open and return model
         """
         return tfjs.converters.load_keras_model("Saved_Model\\model.json")
 
