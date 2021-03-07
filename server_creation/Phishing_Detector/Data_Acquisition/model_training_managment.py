@@ -5,19 +5,20 @@ import tensorflow as tf
 import tensorflowjs as tfjs
 from .models import Web_scraping_data, Models_Helper
 
-"""
+
 class traineble_data:
     
     COLUMNS = ['having_IP_Address', 'URL_Length', 'Shortining_Service',
         'having_At_Symbol', 'double_slash_redirecting', 'Prefix_Suffix',
         'having_Sub_Domain', 'Favicon', 'port', 'HTTPS_token', 'Request_URL',
         'URL_of_Anchor', 'Links_in_tags', 'SFH', 'Iframe', 'Result']
-    NUM_OF_FEATURES = len(traineble_data.COLUMNS)  # updating dimension size
 
-    def __init__():
+    NUM_OF_FEATURES = len(COLUMNS)  # updating dimension size
+
+    def __init__(self):
         self.df = pd.DataFrame(columns=traineble_data.COLUMNS)
     
-    def preprocess():
+    def preprocess(self):
         # splitting features from classes(results)
         x_data = self.df.iloc[0: -1, 0: traineble_data.NUM_OF_FEATURES]  # feature data
         y_data = self.df.iloc[0: -1, traineble_data.NUM_OF_FEATURES]  # result data
@@ -25,21 +26,21 @@ class traineble_data:
         # splitting data to training, validation & testing
         x_temp, self.x_test, y_temp, self.y_test = skms.train_test_split(x_data, y_data, test_size=0.09, random_state=18)
         self.x_train, self.x_val, self.y_train, self.y_val = skms.train_test_split(x_temp, y_temp, test_size=0.1, random_state=27)
-"""
+
 class Model_Training_Helper:
     MIN_TRAINEBLE_LINES = 60  
-"""
+
     @staticmethod 
     def open_model():
         """
-        ##open and return model
+        open and return model
         """
         return tfjs.converters.load_keras_model("Saved_Model\\model.json")
 
     @staticmethod
     def save_model(model):
         """
-        #saves the retrained model in the required place
+        saves the retrained model in the required place
         """
         tfjs.converters.save_keras_model(model, "Saved_Model")
 
@@ -89,7 +90,3 @@ class Model_Training_Helper:
         print("working")
         print(data)
         return  True
-
-"""
-
-

@@ -14,14 +14,14 @@ import asyncio
 from .web_scraping import web_scraping
 import pyppeteer
 from django.http import FileResponse
-#from .model_training_managment import Model_Training_Helper
+from .model_training_managment import Model_Training_Helper
 
 
 PHISHTANK_URL = "http://data.phishtank.com/data/online-valid.csv"
 TEMP_LOC = "tempTank.csv"
 
 def main(request):
-    #model = open_model()
+    Model_Training_Helper.train_model()
     #save_model(model)
     #train_model()
     return serve_model(request)
