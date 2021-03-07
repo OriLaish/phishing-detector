@@ -20,12 +20,13 @@ class traineble_data:
     
     def preprocess(self):
         # splitting features from classes(results)
-        x_data = self.df.iloc[0: -1, 0: traineble_data.NUM_OF_FEATURES]  # feature data
-        y_data = self.df.iloc[0: -1, traineble_data.NUM_OF_FEATURES]  # result data
+        print("in preprocess")
+        #x_data = self.df.iloc[0: -1, 0: traineble_data.NUM_OF_FEATURES-1]  # feature data
+        #y_data = self.df.iloc[0: -1, traineble_data.NUM_OF_FEATURES-1]  # result data
 
         # splitting data to training, validation & testing
-        x_temp, self.x_test, y_temp, self.y_test = skms.train_test_split(x_data, y_data, test_size=0.09, random_state=18)
-        self.x_train, self.x_val, self.y_train, self.y_val = skms.train_test_split(x_temp, y_temp, test_size=0.1, random_state=27)
+        #x_temp, self.x_test, y_temp, self.y_test = skms.train_test_split(x_data, y_data, test_size=0.09, random_state=18)
+        #self.x_train, self.x_val, self.y_train, self.y_val = skms.train_test_split(x_temp, y_temp, test_size=0.1, random_state=27)
 
 class Model_Training_Helper:
     MIN_TRAINEBLE_LINES = 60  
@@ -51,15 +52,21 @@ class Model_Training_Helper:
         """
         #untrained_urls = Web_scraping_data.objects.filter(is_trained=False)
         untrained_urls = Web_scraping_data.objects.filter(id=1)
+        print(untrained_urls[0].features)
         min_amount_of_trainebles = min(untrained_urls.filter(is_phishing=True).count(), untrained_urls.filter(is_phishing=False).count())
+        print(min_amount_of_trainebles)
         data = traineble_data()
+        Model_Training_Helper.enter_line_to_data(untrained_urls[0],data)
+        Model_Training_Helper.enter_line_to_data(untrained_urls[0],data)
+        
         #if min_amount_of_trainebles < Model_Training_Helper.MIN_TRAINEBLE_LINES :
         #    return None
         for line in untrained_urls.filter(is_phishing=True)[:min_amount_of_trainebles]:
             Model_Training_Helper.enter_line_to_data(line, data)
         for line in untrained_urls.filter(is_phishing=False)[:min_amount_of_trainebles]:
             Model_Training_Helper.enter_line_to_data(line, data)
-        data.preprocess()
+        print(data.df)
+        #data.preprocess()
         return data
             
 
@@ -88,5 +95,5 @@ class Model_Training_Helper:
         #model.fit(data.x_train, data.y_train, epochs=10, batch_size=100, validation_data=(data.x_val, data.y_val), verbose=1, callbacks=[early_stopping])
         #Model_Training_Helper.save_model(model)
         print("working")
-        print(data)
+        print(data.df)
         return  True
