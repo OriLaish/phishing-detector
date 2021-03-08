@@ -26,8 +26,7 @@ class traineble_data:
         y_data = self.df.iloc[0: -1, traineble_data.NUM_OF_FEATURES-1]  # result data
 
         # splitting data to training, validation & testing
-        x_temp, self.x_test, y_temp, self.y_test = skms.train_test_split(x_data, y_data, test_size=0.09, random_state=18)
-        self.x_train, self.x_val, self.y_train, self.y_val = skms.train_test_split(x_temp, y_temp, test_size=0.1, random_state=27)
+        self.x_train, self.x_val, self.y_train, self.y_val =skms.train_test_split(x_data, y_data, test_size=0.1, random_state=18)
 
 class Model_Training_Helper:
     MIN_TRAINEBLE_LINES = 60  
