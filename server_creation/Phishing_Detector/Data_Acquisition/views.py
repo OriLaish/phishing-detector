@@ -51,14 +51,13 @@ def phishtank_url_db_update(request):
            break
     endTime = datetime.datetime.now()
     TotalTime = endTime - startTime
-    return HttpResponse(f"It took (in seconds): {TotalTime.seconds}")
+    return HttpResponse(f"It took (in microseconds): {TotalTime.microseconds}")
 
 
 def scrape_new_urls(request):
     """
     scrape all unscraped urls in server
     """
-    
     startTime = datetime.datetime.now()
     unscraped_urls = Phishtank_urls.objects.filter(is_scraped=False)
     event_loop = asyncio.new_event_loop()
@@ -73,10 +72,21 @@ def scrape_new_urls(request):
     event_loop.run_until_complete(browser.close())
     endTime = datetime.datetime.now()
     TotalTime = endTime - startTime
-    return HttpResponse(f"It took (in seconds): {TotalTime.seconds}")
-    
+    return HttpResponse(f"It took (in microseconds): {TotalTime.microseconds}")
 
 
+def update_client_tables(request):
+    startTime = datetime.datetime.now()
+    Models_Helper.update_client_data_table()
+    Models_Helper.add_client_urls_to_scraping_table()
+    return HttpResponse(f"It took (in microseconds): {(datetime.datetime.now() - startTime).microseconds}")
+
+
+def train_model():
+    startTime = datetime.datetime.now()
+    if Model_Training_Helper.train_model():
+        return HttpResponse(f"secsseful training took (in microseconds): {(datetime.datetime.now() - startTime).microseconds}")
+    return HttpResponse(f"failed to train due to lack of data")
 
 
 class client_url_submission_api(APIView):
