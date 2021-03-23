@@ -55,6 +55,7 @@ const PhishingPradiction = 0.99
                 var url = tab.url;
                 var featuresToSend = globalThis.features
                 var Is_PhishingToSend = message.Is_Phishing
+                var CookieId = message.cookieValue
                 var ServerURL = "http://127.0.0.1:8000/submit_url"
                 // send it to the server
                 var HTTPRequest = new XMLHttpRequest();
@@ -70,6 +71,7 @@ const PhishingPradiction = 0.99
                     }
                 }
                 alert(params);
+                alert(CookieId)
                 HTTPRequest.send(params);
                 alert("sended")
 

@@ -7,7 +7,7 @@
         "persistent": true,
         "page": "background.html"
     },
-    "permissions" : ["contextMenus" , "webNavigation" , "webRequest", "tabs" ,  "webRequestBlocking", "*://*.youtube.com/*" , "*://*.ynet.co.il/*"],
+    "permissions" : ["contextMenus" , "webNavigation" , "webRequest", "tabs" ,  "webRequestBlocking", "*://*.youtube.com/*" , "*://*.ynet.co.il/*" , "cookies" , "http://*/*", "https://*/*"],
     "content_scripts":[
         {
             "matches": ["<all_urls>"],
