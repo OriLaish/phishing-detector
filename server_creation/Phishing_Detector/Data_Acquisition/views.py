@@ -82,7 +82,7 @@ def update_client_tables(request):
     return HttpResponse(f"It took (in microseconds): {(datetime.datetime.now() - startTime).microseconds}")
 
 
-def train_model():
+def train_model(request):
     startTime = datetime.datetime.now()
     if Model_Training_Helper.train_model():
         return HttpResponse(f"secsseful training took (in microseconds): {(datetime.datetime.now() - startTime).microseconds}")

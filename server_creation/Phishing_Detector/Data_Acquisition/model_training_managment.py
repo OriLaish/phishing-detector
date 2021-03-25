@@ -78,10 +78,10 @@ class Model_Training_Helper:
         """
         #train the opened model and save it
         """
-        model = Model_Training_Helper.open_model()
         data = Model_Training_Helper.process_training_data()
-        if data == None:
+        if data is None:
             return False
+        model = Model_Training_Helper.open_model()
         early_stopping = tf.keras.callbacks.EarlyStopping(monitor='loss', min_delta=0.05, patience=5)  # to prevent over fit
         model.fit(data.x_train, data.y_train, epochs=10, batch_size=100, validation_data=(data.x_val, data.y_val), verbose=1, callbacks=[early_stopping])
         Model_Training_Helper.save_model(model)
