@@ -2,18 +2,18 @@ from django.shortcuts import render
 import pandas as pd
 import csv
 import datetime
+import uuid
 from .models import URLS, If_Scraped_enum, Phishtank_urls, Client_urls, Web_scraping_data, Models_Helper
 from rest_framework import generics, status
 from rest_framework.views import APIView
 from rest_framework.response import Response
-from django.http import HttpResponse
+from django.http import HttpResponse, FileResponse, JsonResponse
 from .serializers import client_submission_data, client_submission_data_serializer
 from rest_framework.parsers import JSONParser
 from io import StringIO
 import asyncio
 from .web_scraping import web_scraping
 import pyppeteer
-from django.http import FileResponse
 from .model_training_managment import Model_Training_Helper
 
 
@@ -102,8 +102,7 @@ class client_url_submission_api(APIView):
         if not request_info_serialzer.is_valid():
             print(request_info_serialzer.errors)
             return Response({'Bad Request': f'failed to process requrst - {request_info_serialzer.errors}'}, status=status.HTTP_400_BAD_REQUEST)
-        request_info_serialzer.save()
-        print(f"url={request_info_serialzer.data.get('url')}, is_phishing={request_info_serialzer.data.get('is_phishing')}, features={request_info_serialzer.data.get('features')}")  
+        request_info_serialzer.save()  
         if Models_Helper.insert_client_url_line(url=request_info_serialzer.data.get('url'), is_phishing=request_info_serialzer.data.get('is_phishing'), features=request_info_serialzer.data.get('features')):
             return Response({'message': 'url submitted sucssefully'}, status=status.HTTP_202_ACCEPTED)
         else:
@@ -113,7 +112,13 @@ class client_url_submission_api(APIView):
         return Response({'Bad Request': 'Only available as post requests'}, status=status.HTTP_400_BAD_REQUEST)
     
 
-
+def uid_creation(request):
+    """
+    handeling uid creations for clients
+    """
+    new_uid = Models_Helper.create_uid()
+    return JsonResponse({"uid": new_uid})
+   
 
 
     

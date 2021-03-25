@@ -2,6 +2,7 @@ from django.db import models
 from enum import Enum
 import asyncio
 from .web_scraping import web_scraping
+import uuid
 
 SUBMISSION_COUNT_THRESHOLD = 4
 
@@ -15,12 +16,23 @@ class If_Scraped_enum(Enum):
         return tuple((i.name, i.value) for i in cls)
 
 
+class UIDS(models.Model):
+    uid = models.CharField(max_length=100)
+
+    def __str__(self):
+        return f'UID: {self.url}, id: {self.id}'
+    
+
 class URLS(models.Model):
     url = models.URLField(null=False, max_length=500, unique=True)
 
     def __str__(self):
         return f'URL: {self.url}, id: {self.id}'
     
+
+class UIDS_URLS(models.Model):
+    url_id = models.ForeignKey(URLS, null=False, on_delete=models.CASCADE, unique=False) 
+    uid_id = models.ForeignKey(UIDS, null=False, on_delete=models.CASCADE, unique=False)
 
 class Phishtank_urls(models.Model):
     url_id = models.ForeignKey(URLS, null=False, on_delete=models.CASCADE, unique=True)
@@ -70,6 +82,31 @@ class Models_Helper:
         if Models_Helper.get_url_id(url) == -1:
             URLS(url=url).save()
         return Models_Helper.get_url_id(url)
+    
+    @staticmethod
+    def create_uid():
+        """
+        that function creates a new & unique uid saves it in the db and returns it 
+        """
+        while True:
+            new_uid = str(uuid.uuid4())
+            if UIDS.objects.filter(uid=new_uid).count() == 0:  # checks if uid is not allready exsiting
+                UIDS(uid=new_uid).save()
+                return new_uid
+    
+    @staticmethod
+    def insert_uid_url(uid_obj, url_obj):
+        """
+        that function attempts to enter the uid and url to the uid_url db and returns true if sucsseded and false otherwise
+        :params: uid_obj: (UIDS), url_obj: (URLS)
+        """
+        if UIDS_URLS.objects.filter(uid_id=uid_obj).filter(url_id=url_obj).count() == 0:
+            try:
+                UIDS_URLS(url_id=url_obj, uid_id=uid_obj).save()
+                return True
+            except:
+                return False
+        return False
 
     @staticmethod
     def insert_phistank_url_line(url, submission_date):
@@ -86,20 +123,22 @@ class Models_Helper:
             return False
     
     @staticmethod
-    def insert_client_url_line(url, is_phishing, features):
+    def insert_client_url_line(uid, url, is_phishing, features):
         """
         that function recieve a url that had been submitted to the server by a client. if the url had allready been submitedit adds to the submission
         count and if not it adds it.
-        params: url: the url to insert (Str), is_phishing: if the url had been submitted as phishing by the client(bool), features: featrues for model 
-        training(Str)
+        params: uid: the client uid(Str), url: the url to insert (Str), is_phishing: if the url had been submitted as phishing by the client(bool), features: featrues 
+        for model training(Str)
         :return: if insertion secsseded
         """
-        print("is phishing: ", is_phishing)
-        if Phishtank_urls.objects.filter(url_id=Models_Helper.get_url_id(url)).count() == 1 or type(url) != str or type(is_phishing) != bool or type(features) != str:
+        
+        if Phishtank_urls.objects.filter(url_id=Models_Helper.get_url_id(url)).count() == 1 or type(url) != str or type(is_phishing) != bool or type(features) != str:  # param validation
+            return False
+        url_obj = URLS.objects.filter(id=Models_Helper.insert_url(url))[0]  # inserts the url to URLS if not exsisting and saving the URL line in var 
+        if not Models_Helper.insert_uid_url(uid_obj=UIDS.objects.filter(uid=uid), url_obj=url_obj):  # inserting uid_url to db if not existing and checking if allready exsisting
             return False
         try:
-            print("is phishing: ", is_phishing)
-            url_line = Client_urls.objects.filter(url_id=Models_Helper.get_url_id(url))[0]
+            url_line = Client_urls.objects.filter(url_id=Models_Helper.get_url_id(url))[0]  # getting url_id if url exsists
             if url_line.is_phishing == is_phishing:  # if the phishing status of the saved and submitted is the same then increase count
                 url_line.submission_count = url_line.submission_count + 1
             else:  # else decreas count 
@@ -107,9 +146,8 @@ class Models_Helper:
             url_line.save()
             return True
         except:
-            url_id = Models_Helper.insert_url(url)
             try:
-                Client_urls(url_id=URLS.objects.filter(id=url_id)[0], features=features, is_phishing=is_phishing, submission_count=1).save()
+                Client_urls(url_id=url_obj, features=features, is_phishing=is_phishing, submission_count=1).save()
                 return True
             except Exception as e:
                 print("## Exception: ", e)
@@ -152,9 +190,8 @@ class Models_Helper:
             line.is_in_web_scraping = True
             line.save()
     
-
     @staticmethod
-    def scrape_line(line, event_loop, browser=False ):
+    def scrape_line(line, event_loop, browser=False):
         """
         scrape line and adds it to web scrapind data table
         """
@@ -169,6 +206,9 @@ class Models_Helper:
             return True
         else:
             return False
+        
+    
+
     
 
 
