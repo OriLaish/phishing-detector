@@ -17,10 +17,10 @@ class If_Scraped_enum(Enum):
 
 
 class UIDS(models.Model):
-    uid = models.CharField(max_length=100)
+    uid = models.CharField(max_length=100, unique=True, null=False)
 
     def __str__(self):
-        return f'UID: {self.url}, id: {self.id}'
+        return f'UID: {self.uid}, id: {self.id}'
     
 
 class URLS(models.Model):
@@ -134,8 +134,10 @@ class Models_Helper:
         
         if Phishtank_urls.objects.filter(url_id=Models_Helper.get_url_id(url)).count() == 1 or type(url) != str or type(is_phishing) != bool or type(features) != str:  # param validation
             return False
+        uid_obj = UIDS.objects.get(uid=uid)
+        print("***********uid obj: ", uid_obj)
         url_obj = URLS.objects.filter(id=Models_Helper.insert_url(url))[0]  # inserts the url to URLS if not exsisting and saving the URL line in var 
-        if not Models_Helper.insert_uid_url(uid_obj=UIDS.objects.filter(uid=uid), url_obj=url_obj):  # inserting uid_url to db if not existing and checking if allready exsisting
+        if not Models_Helper.insert_uid_url(uid_obj=uid_obj, url_obj=url_obj):  # inserting uid_url to db if not existing and checking if allready exsisting
             return False
         try:
             url_line = Client_urls.objects.filter(url_id=Models_Helper.get_url_id(url))[0]  # getting url_id if url exsists
@@ -145,7 +147,7 @@ class Models_Helper:
                 url_line.submission_count = url_line.submission_count - 1
             url_line.save()
             return True
-        except:
+        except: 
             try:
                 Client_urls(url_id=url_obj, features=features, is_phishing=is_phishing, submission_count=1).save()
                 return True

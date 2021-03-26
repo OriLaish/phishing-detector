@@ -102,8 +102,9 @@ class client_url_submission_api(APIView):
         if not request_info_serialzer.is_valid():
             print(request_info_serialzer.errors)
             return Response({'Bad Request': f'failed to process requrst - {request_info_serialzer.errors}'}, status=status.HTTP_400_BAD_REQUEST)
-        request_info_serialzer.save()  
-        if Models_Helper.insert_client_url_line(url=request_info_serialzer.data.get('url'), is_phishing=request_info_serialzer.data.get('is_phishing'), features=request_info_serialzer.data.get('features')):
+        request_info_serialzer.save()
+        print(request_info_serialzer.data.get('uid'))  
+        if Models_Helper.insert_client_url_line(url=request_info_serialzer.data.get('url'), is_phishing=request_info_serialzer.data.get('is_phishing'), features=request_info_serialzer.data.get('features'), uid=request_info_serialzer.data.get('uid')):
             return Response({'message': 'url submitted sucssefully'}, status=status.HTTP_202_ACCEPTED)
         else:
             return Response({'Bad Request': 'failed to submit url'}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
