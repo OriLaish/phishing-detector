@@ -135,7 +135,6 @@ class Models_Helper:
         if Phishtank_urls.objects.filter(url_id=Models_Helper.get_url_id(url)).count() == 1 or type(url) != str or type(is_phishing) != bool or type(features) != str:  # param validation
             return False
         uid_obj = UIDS.objects.get(uid=uid)
-        print("***********uid obj: ", uid_obj)
         url_obj = URLS.objects.filter(id=Models_Helper.insert_url(url))[0]  # inserts the url to URLS if not exsisting and saving the URL line in var 
         if not Models_Helper.insert_uid_url(uid_obj=uid_obj, url_obj=url_obj):  # inserting uid_url to db if not existing and checking if allready exsisting
             return False
@@ -198,9 +197,7 @@ class Models_Helper:
         scrape line and adds it to web scrapind data table
         """
         try:
-            print(browser)
             featuresOfURL = event_loop.run_until_complete(web_scraping(line.url_id.url, browser))
-            print("in scrape_line")
         except Exception as e:
             print("## Exception in web scraping:", e)
             return True
