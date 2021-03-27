@@ -11,9 +11,8 @@ function PhishingSites() {
   chrome.cookies.get({ url: 'http://127.0.0.1:8000', name: 'PhishingDetectorCookie' },
   function (cookie) {
     if (cookie) { //cookie exist
-      alert(cookie.value) 
       chrome.runtime.sendMessage({Is_Phishing: false , sender: "popup.js" , cookieValue: cookie.value}, function(response) {
-        console.log(response);
+        
       });
     }
     else { // need to create the cookie
@@ -27,7 +26,7 @@ function PhishingSites() {
             var returnJson = JSON.parse(HTTPRequest.responseText); //get the uid from the server 
             chrome.cookies.set({ url: "http://127.0.0.1:8000", name: "PhishingDetectorCookie", value: returnJson.uid}); // create the cookie
           chrome.runtime.sendMessage({Is_Phishing: false , sender: "popup.js" , cookieValue: returnJson.uid}, function(response) {
-            console.log(response);
+            
           });
           } 
         }
@@ -46,7 +45,7 @@ function LegitimateSites() {
   function (cookie) {
     if (cookie) { //cookie exist 
       chrome.runtime.sendMessage({Is_Phishing: false , sender: "popup.js" , cookieValue: cookie.value}, function(response) {
-        console.log(response);
+        
       });
     }
     else { // need to create the cookie
@@ -57,7 +56,7 @@ function LegitimateSites() {
             var returnJson = JSON.parse(HTTPRequest.responseText); //get the uid from the server 
             chrome.cookies.set({ url: "http://127.0.0.1:8000", name: "PhishingDetectorCookie", value: returnJson.uid}); // create the cookie
             chrome.runtime.sendMessage({Is_Phishing: false , sender: "popup.js" , cookieValue: returnJson.uid}, function(response) {
-              console.log(response);
+              
             });
           } 
         }

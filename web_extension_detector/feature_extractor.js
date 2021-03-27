@@ -300,7 +300,6 @@ listOfFeatures.push(internalUrlRequestsinA()) //1.2.2
 listOfFeatures.push(internalUrlRequestsinMetaScriptsLink()) //1.2.3
 listOfFeatures.push(getIsSFH()) //1.2.4
 listOfFeatures.push(usingIFrame()) //1.3.5
-console.log(listOfFeatures)
 
 
 
