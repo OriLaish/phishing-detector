@@ -27,8 +27,13 @@ def main(request):
     return serve_model(request)
 
 def serve_model(request):
+    print("in serve model")
     return FileResponse(open('Saved_Model/model.json', 'rb'))
 
+
+def serve_group1(request):
+    print("in serve group1")
+    return FileResponse(open('Saved_Model/group1-shard1of1.bin', 'rb'))
 
 def phishtank_url_db_update(request):
     """

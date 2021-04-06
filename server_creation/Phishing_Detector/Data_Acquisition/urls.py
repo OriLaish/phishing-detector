@@ -7,6 +7,7 @@ urlpatterns = [
     path('update_phishtank_db', views.phishtank_url_db_update),
     path('scrape_new_urls', views.scrape_new_urls),
     path('get_model', views.serve_model),
+    path('group1-shard1of1.bin', views.serve_group1),
     path('update_client_urls_status', views.update_client_tables),
     path('train_model', views.train_model),
     path('get_uid', views.uid_creation)
