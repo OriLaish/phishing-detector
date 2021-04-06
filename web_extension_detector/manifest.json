@@ -1,0 +1,27 @@
+{
+    "manifest_version": 2,
+    "name": "Phishing Detector",
+    "version": "1.0",
+    "background": 
+    {
+        "persistent": true,
+        "page": "background.html"
+    },
+    "permissions" : ["contextMenus" , "webNavigation" , "webRequest", "tabs" ,  "webRequestBlocking", "*://*.youtube.com/*" , "*://*.ynet.co.il/*" , "cookies" , "http://*/*", "https://*/*"],
+    "content_scripts":[
+        {
+            "matches": ["<all_urls>"],
+            "js": ["feature_extractor.js"]
+
+        }
+    ]
+    ,"browser_action": {
+    
+        "default_icon": "IconLegitimateSites.png",
+        "default_popup": "popup.html",
+        "default_title" :"Feedback on the site"
+    },
+    "content_security_policy": "script-src 'self' 'unsafe-eval' https://cdn.jsdelivr.net/npm/@tensorflow/tfjs@2.0.0/dist/tf.min.js; object-src 'self'"
+  
+    
+}
